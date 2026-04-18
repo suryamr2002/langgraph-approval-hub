@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ⚡ LangGraph Approval Hub
 
-## Getting Started
+> The missing piece in LangGraph production deployments.
 
-First, run the development server:
+LangGraph's `interrupt()` pauses your agent — but sends no notification, shows no UI, and provides no audit trail. This project fixes that.
+
+**LangGraph Approval Hub** is a free, open-source dashboard that gives enterprise teams:
+- Real-time view of all pending agent approvals
+- Slack + email notifications when an agent is waiting
+- Escalation if no one responds within your timeout
+- Full audit log for compliance teams
+- One-command deploy — forever free
+
+## Live Demo
+
+👉 **[langgraph-approval-hub.vercel.app](https://langgraph-approval-hub.vercel.app)** — try it with mock agents, no signup needed.
+
+## Deploy Your Own (Free)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/surya-mr/langgraph-approval-hub&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY,SLACK_WEBHOOK_URL,API_SECRET_TOKEN)
+
+1. Click the button above
+2. Create a free [Supabase](https://supabase.com) project and run `supabase/schema.sql`
+3. Fill in the environment variables
+4. Done — your private instance is live
+
+## Integrate in 3 Lines
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pip install langgraph-approval-hub
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```python
+from langgraph_approval_hub import request_approval
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+decision = request_approval(
+    hub_url="https://your-hub.vercel.app",
+    api_token="your-api-secret-token",
+    agent_name="Finance Agent",
+    action_description="Process $4,200 refund batch for 12 customers",
+    assignee="finance-team",    # team name or email address
+    assignee_type="team",
+)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+if decision == "approved":
+    process_refunds()
+```
 
-## Learn More
+## What Gets Built
 
-To learn more about Next.js, take a look at the following resources:
+| Gap in LangGraph | What We Provide |
+|---|---|
+| No notification when agent interrupts | Slack + email sent instantly |
+| No UI to approve/reject | Clean web dashboard |
+| No escalation if nobody responds | Configurable timeout + escalation chain |
+| No audit trail | Full append-only decision history with CSV export |
+| No team routing | Assign to a person or a named team |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Stack (100% Free)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Next.js 14** on Vercel (free tier)
+- **Supabase** PostgreSQL (free tier)
+- **Resend** email (free — 100/day)
+- **Slack Incoming Webhooks** (free)
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
