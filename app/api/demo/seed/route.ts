@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import { seedDemoData } from '@/lib/demo-seed'
 
 export async function POST() {
-  if (process.env.NEXT_PUBLIC_DEMO_MODE !== 'true') {
+  if (process.env.DEMO_MODE !== 'true') {
     return NextResponse.json({ error: 'Demo mode is not enabled' }, { status: 403 })
   }
   try {

@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="w-full bg-yellow-50 border-b border-yellow-200 px-4 py-2 text-xs text-yellow-800 text-center">
             🎭 Demo mode — data is simulated.{' '}
             <a
-              href="https://github.com/surya-mr/langgraph-approval-hub"
+              href="https://github.com/suryamr2002/langgraph-approval-hub"
               className="underline font-semibold"
             >
               Deploy your own →
