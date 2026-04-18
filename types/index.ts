@@ -16,7 +16,7 @@ export interface Approval {
   decided_by: string | null
   decision_note: string | null
   created_at: string
-  decided_at: string | null
+  decided_at?: string | null
   expires_at: string
 }
 
