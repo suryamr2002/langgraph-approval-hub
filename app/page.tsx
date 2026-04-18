@@ -1,12 +1,13 @@
 // app/page.tsx
 import StatsBar from '@/components/StatsBar'
-import ApprovalTable from '@/components/ApprovalTable'
+import DashboardClient from '@/components/DashboardClient'
 import type { Approval, DashboardStats } from '@/types'
 
-async function getData(): Promise<{ approvals: Approval[]; stats: DashboardStats }> {
+async function getData(status?: string): Promise<{ approvals: Approval[]; stats: DashboardStats }> {
   const base = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  const url = status ? `${base}/api/approvals?status=${status}` : `${base}/api/approvals`
   try {
-    const res = await fetch(`${base}/api/approvals`, { cache: 'no-store' })
+    const res = await fetch(url, { cache: 'no-store' })
     if (!res.ok) throw new Error('Failed')
     return res.json()
   } catch {
@@ -17,8 +18,14 @@ async function getData(): Promise<{ approvals: Approval[]; stats: DashboardStats
   }
 }
 
-export default async function DashboardPage() {
-  const { approvals, stats } = await getData()
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: { status?: string }
+}) {
+  const activeStatus = searchParams.status ?? null
+  const { approvals, stats } = await getData(activeStatus ?? undefined)
+  const demoMode = process.env.DEMO_MODE === 'true'
 
   return (
     <div>
@@ -27,7 +34,13 @@ export default async function DashboardPage() {
         <span className="text-xs text-gray-400">Updates on refresh</span>
       </div>
       <StatsBar stats={stats} />
-      <ApprovalTable approvals={approvals} />
+      <div className="mt-6">
+        <DashboardClient
+          approvals={approvals}
+          activeStatus={activeStatus}
+          demoMode={demoMode}
+        />
+      </div>
     </div>
   )
 }
