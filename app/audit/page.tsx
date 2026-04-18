@@ -21,9 +21,11 @@ export default async function AuditPage() {
         <h1 className="text-xl font-bold text-gray-900">Audit Log</h1>
         <a
           href="/api/audit"
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-sm text-green-600 hover:underline font-medium"
         >
-          ↓ Export JSON
+          ↗ Export JSON
         </a>
       </div>
       <p className="text-sm text-gray-500 mb-4">{total ?? 0} total resolved decisions</p>
