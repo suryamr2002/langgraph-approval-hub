@@ -17,7 +17,7 @@ LangGraph's `interrupt()` pauses your agent — but sends no notification, shows
 
 ## Deploy Your Own (Free)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/surya-mr/langgraph-approval-hub&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY,SLACK_WEBHOOK_URL,API_SECRET_TOKEN)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/suryamr2002/langgraph-approval-hub&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY,RESEND_API_KEY,SLACK_WEBHOOK_URL,API_SECRET_TOKEN)
 
 1. Click the button above
 2. Create a free [Supabase](https://supabase.com) project and run `supabase/schema.sql`
