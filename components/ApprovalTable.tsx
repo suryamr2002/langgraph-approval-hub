@@ -10,12 +10,18 @@ function minutesAgo(isoString: string): string {
   return `${Math.floor(mins / 60)}h ${mins % 60}m`
 }
 
-export default function ApprovalTable({ approvals }: { approvals: Approval[] }) {
+export default function ApprovalTable({
+  approvals,
+  emptyMessage = 'No pending approvals',
+}: {
+  approvals: Approval[]
+  emptyMessage?: string
+}) {
   if (approvals.length === 0) {
     return (
       <div className="text-center py-20 text-gray-400">
         <div className="text-4xl mb-3">✅</div>
-        <p className="font-medium">No pending approvals</p>
+        <p className="font-medium">{emptyMessage}</p>
       </div>
     )
   }
