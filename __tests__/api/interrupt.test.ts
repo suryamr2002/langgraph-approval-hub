@@ -70,4 +70,57 @@ describe('POST /api/interrupt', () => {
     const body = await res.json()
     expect(body.approval_id).toBe('test-uuid')
   })
+
+  it('returns 401 when Bearer token is wrong', async () => {
+    const req = new NextRequest('http://localhost/api/interrupt', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer wrong-token' },
+      body: JSON.stringify({}),
+    })
+    const res = await POST(req)
+    expect(res.status).toBe(401)
+  })
+
+  it('uses default timeout of 60 minutes when not specified', async () => {
+    const req = new NextRequest('http://localhost/api/interrupt', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer test-token', 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        agent_name: 'Finance Agent',
+        action_description: 'Process refund',
+        assignee: 'finance-team',
+        assignee_type: 'team',
+        // no timeout_minutes
+      }),
+    })
+    const res = await POST(req)
+    expect(res.status).toBe(201)
+    const body = await res.json()
+    expect(body.approval_id).toBe('test-uuid')
+  })
+
+  it('returns 500 when Supabase insert fails', async () => {
+    // Override the mock to return an error for this test only
+    const { supabaseAdmin } = require('@/lib/supabase')
+    supabaseAdmin.from.mockReturnValueOnce({
+      insert: jest.fn(() => ({
+        select: jest.fn(() => ({
+          single: jest.fn(() => ({ data: null, error: { message: 'DB connection failed' } })),
+        })),
+      })),
+    })
+
+    const req = new NextRequest('http://localhost/api/interrupt', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer test-token', 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        agent_name: 'Finance Agent',
+        action_description: 'Process refund',
+        assignee: 'finance-team',
+        assignee_type: 'team',
+      }),
+    })
+    const res = await POST(req)
+    expect(res.status).toBe(500)
+  })
 })

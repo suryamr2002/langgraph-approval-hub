@@ -45,7 +45,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  await sendNotifications(data)
+  try {
+    await sendNotifications(data)
+  } catch {
+    // Notification failure should not block the approval creation
+    console.error('Failed to send notifications for approval', data.id)
+  }
 
   return NextResponse.json({ approval_id: data.id }, { status: 201 })
 }
