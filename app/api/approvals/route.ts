@@ -10,22 +10,17 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const status = searchParams.get('status')
 
-  let query = supabaseAdmin
+  const { data, error } = await supabaseAdmin
     .from('approvals')
     .select('*')
     .order('created_at', { ascending: false })
-
-  if (status) {
-    query = query.eq('status', status)
-  }
-
-  const { data, error } = await query
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
   const all = data ?? []
+  const approvals = status ? all.filter((a) => a.status === status) : all
 
   const todayStart = new Date()
   todayStart.setHours(0, 0, 0, 0)
@@ -51,5 +46,5 @@ export async function GET(req: NextRequest) {
     avg_response_minutes: Math.round(avgMs / 60000),
   }
 
-  return NextResponse.json({ approvals: all, stats })
+  return NextResponse.json({ approvals, stats })
 }
