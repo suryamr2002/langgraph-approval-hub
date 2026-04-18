@@ -10,6 +10,21 @@ jest.mock('resend', () => ({
   })),
 }))
 
+jest.mock('@/lib/supabase', () => ({
+  supabaseAdmin: {
+    from: () => ({
+      select: () => ({
+        eq: () => ({
+          single: jest.fn().mockResolvedValue({
+            data: { members: ['finance@acme.com'] },
+            error: null,
+          }),
+        }),
+      }),
+    }),
+  },
+}))
+
 global.fetch = jest.fn()
 
 const mockApproval: Approval = {

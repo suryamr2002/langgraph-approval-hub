@@ -1,5 +1,6 @@
 // lib/notifications.ts
 import { Resend } from 'resend'
+import { supabaseAdmin } from '@/lib/supabase'
 import type { Approval } from '@/types'
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
@@ -29,21 +30,32 @@ async function sendEmail(to: string, subject: string, html: string): Promise<voi
   })
 }
 
+export async function resolveEmailRecipients(approval: Approval): Promise<string[]> {
+  if (approval.assignee_type === 'person') {
+    return [approval.assignee]
+  }
+  const { data } = await supabaseAdmin
+    .from('teams')
+    .select('members')
+    .eq('name', approval.assignee)
+    .single()
+  return (data?.members as string[]) ?? []
+}
+
 export async function sendNotifications(approval: Approval): Promise<void> {
   const url = dashboardUrl(approval.id)
   const slackText = `🤖 *${approval.agent_name}* needs approval\n>${approval.action_description}\n<${url}|View & Decide>`
-
   const emailHtml = `
     <h2>${approval.agent_name} needs your approval</h2>
     <p>${approval.action_description}</p>
     <a href="${url}" style="background:#4ade80;color:#000;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:bold;">View &amp; Decide</a>
   `
-
-  const recipient = approval.assignee
+  const subject = `Action required: ${approval.agent_name}`
+  const recipients = await resolveEmailRecipients(approval)
 
   await Promise.allSettled([
     sendSlack(slackText),
-    sendEmail(recipient, `Action required: ${approval.agent_name}`, emailHtml),
+    ...recipients.map((r) => sendEmail(r, subject, emailHtml)),
   ])
 }
 
