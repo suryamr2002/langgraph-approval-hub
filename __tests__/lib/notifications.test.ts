@@ -10,15 +10,14 @@ jest.mock('resend', () => ({
   })),
 }))
 
+const mockSingle = jest.fn()
+
 jest.mock('@/lib/supabase', () => ({
   supabaseAdmin: {
     from: () => ({
       select: () => ({
         eq: () => ({
-          single: jest.fn().mockResolvedValue({
-            data: { members: ['finance@acme.com'] },
-            error: null,
-          }),
+          single: mockSingle,
         }),
       }),
     }),
@@ -49,6 +48,10 @@ describe('sendNotifications', () => {
     jest.clearAllMocks()
     process.env.SLACK_WEBHOOK_URL = 'https://hooks.slack.com/test'
     ;(global.fetch as jest.Mock).mockResolvedValue({ ok: true })
+    mockSingle.mockResolvedValue({
+      data: { members: ['finance@acme.com'] },
+      error: null,
+    })
   })
 
   it('calls Slack webhook with approval details', async () => {

@@ -34,12 +34,15 @@ export async function resolveEmailRecipients(approval: Approval): Promise<string
   if (approval.assignee_type === 'person') {
     return [approval.assignee]
   }
-  const { data } = await supabaseAdmin
+  const { data, error } = await supabaseAdmin
     .from('teams')
     .select('members')
     .eq('name', approval.assignee)
     .single()
-  return (data?.members as string[]) ?? []
+  if (error) {
+    console.warn('[resolveEmailRecipients] team lookup failed', approval.assignee, error.message)
+  }
+  return data?.members ?? []
 }
 
 export async function sendNotifications(approval: Approval): Promise<void> {
