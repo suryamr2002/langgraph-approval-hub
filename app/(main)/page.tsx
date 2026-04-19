@@ -1,4 +1,4 @@
-// app/page.tsx
+// app/(main)/page.tsx
 import StatsBar from '@/components/StatsBar'
 import DashboardClient from '@/components/DashboardClient'
 import type { Approval, DashboardStats } from '@/types'

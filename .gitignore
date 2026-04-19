@@ -12,3 +12,6 @@ sdk/dist/
 sdk/*.egg-info/
 
 .vercel
+.env.vercel.tmp
+tsconfig.tsbuildinfo
+next-env.d.ts

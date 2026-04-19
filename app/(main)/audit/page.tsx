@@ -1,4 +1,4 @@
-// app/audit/page.tsx
+// app/(main)/audit/page.tsx
 import AuditTable from '@/components/AuditTable'
 
 async function getAuditRecords() {
