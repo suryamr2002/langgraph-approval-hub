@@ -1,4 +1,5 @@
 // app/docs/page.tsx
+import type { ReactNode } from 'react'
 import styles from './docs.module.css'
 import CopyButton from '@/components/CopyButton'
 
@@ -93,7 +94,7 @@ function CodeBlock({ code, label }: { code: string; label?: string }) {
   )
 }
 
-function Callout({ type, children }: { type: 'tip' | 'warn'; children: React.ReactNode }) {
+function Callout({ type, children }: { type: 'tip' | 'warn'; children: ReactNode }) {
   const base = 'rounded-lg p-4 text-sm leading-relaxed flex gap-3 my-4'
   if (type === 'tip')
     return <div className={`${base} bg-green-50 border border-green-200 text-green-900`}><span>ℹ</span><div>{children}</div></div>
@@ -151,9 +152,9 @@ export default function DocsPage() {
               body: '',
               delay: '0.55s',
             },
-          ].map((card, i) => (
+          ].map((card) => (
             <div
-              key={i}
+              key={card.tag}
               className={`bg-white border border-slate-200 rounded-xl p-5 ${styles.fadeUp}`}
               style={{ animationDelay: card.delay }}
             >
@@ -401,7 +402,7 @@ export default function DocsPage() {
               </tr>
             </thead>
             <tbody>
-              {[
+              {([
                 ['hub_url', 'str', true, 'Your Approval Hub URL'],
                 ['api_token', 'str', true, 'Your API_SECRET_TOKEN env var value'],
                 ['agent_name', 'str', true, 'Name shown in the dashboard'],
@@ -412,8 +413,8 @@ export default function DocsPage() {
                 ['escalate_to', 'str', false, 'Email to escalate to if timeout exceeded'],
                 ['timeout_minutes', 'int', false, 'Minutes before escalation triggers (default: 60)'],
                 ['poll_interval', 'int', false, 'Seconds between status polls (default: 10)'],
-              ].map(([param, type, req, desc]) => (
-                <tr key={param as string} className="border-b border-slate-100">
+              ] as [string, string, boolean, string][]).map(([param, type, req, desc]) => (
+                <tr key={param} className="border-b border-slate-100">
                   <td className="border border-slate-200 px-3 py-2">
                     <code className="bg-slate-100 px-1.5 py-0.5 rounded font-mono text-xs">{param}</code>
                   </td>
@@ -444,7 +445,7 @@ export default function DocsPage() {
               </tr>
             </thead>
             <tbody>
-              {[
+              {([
                 ['POST', '/api/interrupt', 'Bearer token', 'Create approval request, fire notifications'],
                 ['GET', '/api/approvals', 'Bearer token', 'List approvals (?status=pending|escalated)'],
                 ['GET', '/api/approvals/[id]', 'Bearer token', 'Get single approval with notification log'],
@@ -452,8 +453,8 @@ export default function DocsPage() {
                 ['GET', '/api/audit', 'None', 'Full audit log — also used for JSON export'],
                 ['GET', '/api/teams', 'None', 'List all configured teams'],
                 ['POST', '/api/teams', 'None', 'Create or update a team'],
-              ].map(([method, route, auth, desc]) => (
-                <tr key={route as string} className="border-b border-slate-100">
+              ] as [string, string, string, string][]).map(([method, route, auth, desc]) => (
+                <tr key={route} className="border-b border-slate-100">
                   <td className="border border-slate-200 px-3 py-2">
                     <code className={`text-xs font-bold px-1.5 py-0.5 rounded font-mono ${method === 'POST' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>{method}</code>
                   </td>
