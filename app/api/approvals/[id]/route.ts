@@ -57,7 +57,11 @@ export async function GET(
   }
 
   // notifications_log is not included (no join) — defaults to [] in UI
-  return NextResponse.json({ ...(rows[0] as object), notifications_log: [] }, {
+  const row = rows[0] as Record<string, unknown>
+  // DEBUG: log what we actually got from Supabase
+  console.log(`[poll] id=${params.id} got status=${row.status} total_rows=${rows.length}`)
+
+  return NextResponse.json({ ...row, notifications_log: [] }, {
     headers: { 'Cache-Control': 'no-store' },
   })
 }
