@@ -3,12 +3,7 @@
 import Link from 'next/link'
 import StatusBadge from './StatusBadge'
 import type { Approval } from '@/types'
-
-function minutesAgo(isoString: string): string {
-  const mins = Math.floor((Date.now() - new Date(isoString).getTime()) / 60000)
-  if (mins < 60) return `${mins}m`
-  return `${Math.floor(mins / 60)}h ${mins % 60}m`
-}
+import { relativeTime } from '@/lib/formatDate'
 
 export default function ApprovalTable({
   approvals,
@@ -45,7 +40,7 @@ export default function ApprovalTable({
             <div className="text-xs text-gray-500 truncate max-w-xs">{a.action_description}</div>
           </div>
           <div className="text-sm text-gray-600">{a.assignee}</div>
-          <div className="text-sm text-gray-600">{minutesAgo(a.created_at)}</div>
+          <div className="text-sm text-gray-600">{relativeTime(a.created_at)}</div>
           <div><StatusBadge status={a.status} /></div>
           <div>
             <Link

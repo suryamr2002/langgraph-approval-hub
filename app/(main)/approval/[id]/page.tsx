@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import StatusBadge from '@/components/StatusBadge'
 import Timeline from '@/components/Timeline'
 import type { Approval, NotificationLog } from '@/types'
+import { formatDateTime } from '@/lib/formatDate'
 
 type ApprovalWithLogs = Approval & { notifications_log: NotificationLog[] }
 
@@ -147,7 +148,7 @@ export default function ApprovalDetailPage({ params }: { params: { id: string } 
               )}
               <div>
                 <dt className="text-xs uppercase tracking-wide text-gray-400 mb-0.5">Expires at</dt>
-                <dd className="text-gray-800">{new Date(approval.expires_at).toLocaleTimeString()}</dd>
+                <dd className="text-gray-800">{formatDateTime(approval.expires_at)}</dd>
               </div>
             </dl>
           </div>

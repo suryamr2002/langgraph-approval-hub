@@ -1,5 +1,6 @@
 // components/Timeline.tsx
 import type { NotificationLog } from '@/types'
+import { formatDateTime } from '@/lib/formatDate'
 
 const typeLabel: Record<string, string> = {
   slack: '💬 Slack notification sent',
@@ -29,7 +30,7 @@ export default function Timeline({
           <div className="w-2 h-2 rounded-full bg-green-500 mt-1.5 shrink-0" />
           <div>
             <p className="text-sm text-gray-700">{e.label}</p>
-            <p className="text-xs text-gray-400">{new Date(e.time).toLocaleTimeString()}</p>
+            <p className="text-xs text-gray-400">{formatDateTime(e.time)}</p>
           </div>
         </div>
       ))}
