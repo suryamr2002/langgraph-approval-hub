@@ -1,4 +1,7 @@
 // app/(main)/page.tsx
+// Never serve a stale cached render — always re-fetch from Supabase
+export const dynamic = 'force-dynamic'
+
 import StatsBar from '@/components/StatsBar'
 import DashboardClient from '@/components/DashboardClient'
 import type { Approval, DashboardStats } from '@/types'

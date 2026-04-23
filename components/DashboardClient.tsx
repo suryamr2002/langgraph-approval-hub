@@ -1,6 +1,6 @@
 // components/DashboardClient.tsx
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import ApprovalTable from './ApprovalTable'
@@ -30,6 +30,12 @@ export default function DashboardClient({
   const router = useRouter()
   const [search, setSearch] = useState('')
   const [resetting, setResetting] = useState(false)
+
+  // Auto-refresh every 15 s so the list stays live after approvals/rejections
+  useEffect(() => {
+    const id = setInterval(() => router.refresh(), 15_000)
+    return () => clearInterval(id)
+  }, [router])
 
   const filtered = search.trim()
     ? approvals.filter(
