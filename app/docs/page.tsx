@@ -120,22 +120,22 @@ export default function DocsPage() {
         <SectionTitle
           eyebrow="Why this exists"
           title="LangGraph gives you interrupt(). Everything else is your problem."
-          sub="The primitive exists — pause an agent and wait for a human. But who gets notified? Where do they decide? What if they don't respond? These are real complaints from engineers running LangGraph in production."
+          sub="The primitive exists — pause an agent and wait for a human. But who gets notified? Where do they decide? What if they don't respond? These were real complaints from engineers running LangGraph in production. They're now closed. The gap remains."
         />
         <div className="grid grid-cols-2 gap-3">
           {[
             {
-              tag: '⚠ GitHub Issue #6270 · 47 upvotes',
-              tagClass: 'bg-amber-100 text-amber-800',
+              tag: '✓ GitHub Issue #6270 · 47 upvotes · Closed',
+              tagClass: 'bg-slate-100 text-slate-600',
               title: "Messages from nested agents don't stream after interrupt/resume",
               body: "The agent silently pauses. There's no way to show the approver what's happening or why.",
               delay: '0.1s',
             },
             {
-              tag: '⚠ GitHub Issue #3421 · 31 upvotes',
-              tagClass: 'bg-amber-100 text-amber-800',
+              tag: '✓ GitHub Issue #3421 · 31 upvotes · Closed',
+              tagClass: 'bg-slate-100 text-slate-600',
               title: 'Custom auth for human-in-the-loop is locked behind the enterprise plan',
-              body: "Teams need approval routing. The open-source tier offers none. Build it yourself or pay up.",
+              body: "Teams needed approval routing. The open-source tier offered none. Build it yourself or pay up.",
               delay: '0.25s',
             },
             {
@@ -356,12 +356,12 @@ export default function DocsPage() {
             </thead>
             <tbody>
               <tr>
-                <td className="border border-slate-200 px-3 py-2"><code className="bg-slate-100 px-1.5 py-0.5 rounded font-mono text-xs">RESEND_API_KEY</code></td>
+                <td className="border border-slate-200 px-3 py-2"><code className="bg-slate-100 px-1.5 py-0.5 rounded font-mono text-xs text-slate-800">RESEND_API_KEY</code></td>
                 <td className="border border-slate-200 px-3 py-2 text-slate-600">resend.com — free up to 100 emails/day</td>
                 <td className="border border-slate-200 px-3 py-2 text-slate-600">Email to assignee (and team members) on every new request</td>
               </tr>
               <tr>
-                <td className="border border-slate-200 px-3 py-2"><code className="bg-slate-100 px-1.5 py-0.5 rounded font-mono text-xs">SLACK_WEBHOOK_URL</code></td>
+                <td className="border border-slate-200 px-3 py-2"><code className="bg-slate-100 px-1.5 py-0.5 rounded font-mono text-xs text-slate-800">SLACK_WEBHOOK_URL</code></td>
                 <td className="border border-slate-200 px-3 py-2 text-slate-600">Slack Incoming Webhooks — free</td>
                 <td className="border border-slate-200 px-3 py-2 text-slate-600">Slack message to your channel on every new request + escalation</td>
               </tr>
@@ -416,7 +416,7 @@ export default function DocsPage() {
               ] as [string, string, boolean, string][]).map(([param, type, req, desc]) => (
                 <tr key={param} className="border-b border-slate-100">
                   <td className="border border-slate-200 px-3 py-2">
-                    <code className="bg-slate-100 px-1.5 py-0.5 rounded font-mono text-xs">{param}</code>
+                    <code className="bg-slate-100 px-1.5 py-0.5 rounded font-mono text-xs text-slate-800">{param}</code>
                   </td>
                   <td className="border border-slate-200 px-3 py-2 font-mono text-xs text-slate-600">{type}</td>
                   <td className="border border-slate-200 px-3 py-2">
