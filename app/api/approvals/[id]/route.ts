@@ -1,24 +1,20 @@
 // app/api/approvals/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import https from 'https'
-import { URL } from 'url'
 
 // Never cache — SDK polls this route to detect status changes
 export const dynamic = 'force-dynamic'
 
-/** Fetch using Node's built-in https — completely bypasses Next.js's patched fetch() and its per-instance cache */
-function httpsGet(url: string, headers: Record<string, string>): Promise<string> {
+/** Fetch using Node's built-in https — completely bypasses Next.js's patched fetch() */
+function httpsGet(
+  hostname: string,
+  path: string,
+  headers: Record<string, string>
+): Promise<string> {
   return new Promise((resolve, reject) => {
-    const parsed = new URL(url)
-    const options = {
-      hostname: parsed.hostname,
-      path: parsed.pathname + parsed.search,
-      method: 'GET',
-      headers,
-    }
-    const req = https.request(options, (res) => {
+    const req = https.request({ hostname, path, method: 'GET', headers }, (res) => {
       let body = ''
-      res.on('data', (chunk) => { body += chunk })
+      res.on('data', (chunk: string) => { body += chunk })
       res.on('end', () => resolve(body))
     })
     req.on('error', reject)
@@ -33,10 +29,11 @@ export async function GET(
   const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').trim()
   const serviceKey = (process.env.SUPABASE_SERVICE_ROLE_KEY ?? '').trim()
 
-  // No join here — SDK only needs status; parentheses in notifications_log(*) get
-  // percent-encoded by the URL class, breaking the Supabase query.
-  // The dashboard detail page fetches notifications separately via a join on its own.
-  const url = `${supabaseUrl}/rest/v1/approvals?select=*&id=eq.${params.id}`
+  // Extract hostname (e.g. rfupdnwalegceczhghjn.supabase.co)
+  const hostname = supabaseUrl.replace('https://', '').replace('http://', '').trim()
+  // Build path manually — avoid URL class which percent-encodes * and ()
+  const path = `/rest/v1/approvals?select=id,agent_name,action_description,agent_reasoning,assignee,assignee_type,escalate_to,timeout_minutes,status,decided_by,decision_note,created_at,decided_at,expires_at&id=eq.${params.id}`
+
   const headers = {
     apikey: serviceKey,
     Authorization: `Bearer ${serviceKey}`,
@@ -45,8 +42,8 @@ export async function GET(
 
   let body: string
   try {
-    body = await httpsGet(url, headers)
-  } catch (e) {
+    body = await httpsGet(hostname, path, headers)
+  } catch {
     return NextResponse.json({ error: 'Upstream error' }, { status: 502 })
   }
 
@@ -59,7 +56,8 @@ export async function GET(
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
 
-  return NextResponse.json(rows[0], {
+  // notifications_log is not included (no join) — defaults to [] in UI
+  return NextResponse.json({ ...(rows[0] as object), notifications_log: [] }, {
     headers: { 'Cache-Control': 'no-store' },
   })
 }
