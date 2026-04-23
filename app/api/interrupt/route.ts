@@ -4,6 +4,23 @@ import { supabaseAdmin } from '@/lib/supabase'
 import { sendNotifications } from '@/lib/notifications'
 import type { InterruptPayload } from '@/types'
 
+// Simple in-memory rate limiter: max 30 requests per IP per 5 minutes
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
+const RATE_LIMIT = 30
+const WINDOW_MS = 5 * 60 * 1000
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now()
+  const entry = rateLimitMap.get(ip)
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + WINDOW_MS })
+    return true
+  }
+  if (entry.count >= RATE_LIMIT) return false
+  entry.count++
+  return true
+}
+
 function authorized(req: NextRequest): boolean {
   const header = req.headers.get('authorization') ?? ''
   const token = (process.env.API_SECRET_TOKEN ?? '').trim()
@@ -13,6 +30,11 @@ function authorized(req: NextRequest): boolean {
 export async function POST(req: NextRequest) {
   if (!authorized(req)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  if (!checkRateLimit(ip)) {
+    return NextResponse.json({ error: 'Rate limit exceeded. Max 30 requests per 5 minutes.' }, { status: 429 })
   }
 
   const body: InterruptPayload = await req.json()
