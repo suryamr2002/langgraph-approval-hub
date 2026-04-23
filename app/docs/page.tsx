@@ -119,45 +119,87 @@ export default function DocsPage() {
       <section id="why">
         <SectionTitle
           eyebrow="Why this exists"
-          title="LangGraph gives you interrupt(). Everything else is your problem."
-          sub="LangGraph's interrupt() pauses an agent and waits for a human — but that's all it does. No notification, no dashboard, no escalation. These were real GitHub complaints from production engineers. LangGraph has since closed the issues. The workflow gap they described still exists."
+          title="Your agent is about to wire $50,000. Who approves it?"
+          sub="You built the agent. You wired up LangGraph's interrupt() to pause before the irreversible action. Now what? Who gets notified? Where do they decide? What if they're on holiday? You're three days from launch and you're about to build a notification system, a dashboard, and an escalation engine from scratch."
         />
+
+        {/* The gap — what LangGraph gives vs what you still need */}
+        <div className="mb-8 bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+          <div className="grid grid-cols-2 divide-x divide-slate-200">
+            <div className="p-5">
+              <div className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-3">What LangGraph gives you</div>
+              <div className="space-y-2">
+                {[
+                  'interrupt() — pause execution',
+                  'resume() — continue after decision',
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-2 text-sm text-slate-700">
+                    <span className="text-green-500 font-bold">✓</span> {item}
+                  </div>
+                ))}
+                {[
+                  'Notification to the approver',
+                  'Dashboard to approve / reject',
+                  'Escalation if no response',
+                  'Audit trail for compliance',
+                  'Team routing',
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-2 text-sm text-slate-400">
+                    <span className="text-slate-300 font-bold">✗</span> {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="p-5 bg-green-50">
+              <div className="text-[11px] font-bold uppercase tracking-widest text-green-700 mb-3">What Approval Hub adds</div>
+              <div className="space-y-2">
+                {[
+                  'interrupt() — pause execution',
+                  'resume() — continue after decision',
+                  'Email + Slack notification instantly',
+                  'Clean dashboard to approve / reject',
+                  'Auto-escalate after your timeout',
+                  'Full append-only audit log',
+                  'Route to a person or a named team',
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-2 text-sm text-green-800">
+                    <span className="text-green-500 font-bold">✓</span> {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Scenario cards */}
         <div className="grid grid-cols-2 gap-3">
           {[
             {
-              tag: 'GitHub Issue #6270 · 47 upvotes',
-              tagClass: 'bg-amber-100 text-amber-800',
-              href: 'https://github.com/langchain-ai/langgraph/issues/6270',
-              title: "Messages from nested agents don't stream after interrupt/resume",
-              body: "The agent silently pauses. There's no way to show the approver what's happening or why.",
-              note: 'Closed by LangGraph — the notification gap remains.',
+              tag: '💸 Finance Agent',
+              tagClass: 'bg-orange-100 text-orange-800',
+              title: 'Wire $50,000 to a new vendor account',
+              body: 'The agent has verified the details. It needs one human to confirm before it moves the money. With LangGraph alone — nobody knows it\'s waiting.',
               delay: '0.1s',
             },
             {
-              tag: 'GitHub Issue #3421 · 31 upvotes',
-              tagClass: 'bg-amber-100 text-amber-800',
-              href: 'https://github.com/langchain-ai/langgraph/issues/3421',
-              title: 'Custom auth for human-in-the-loop is locked behind the enterprise plan',
-              body: "Teams needed approval routing. The open-source tier offered none.",
-              note: 'Closed by LangGraph — teams still need a ready-made workflow.',
+              tag: '🗂 HR Agent',
+              tagClass: 'bg-purple-100 text-purple-800',
+              title: 'Send rejection emails to 40 candidates',
+              body: 'The pipeline ran overnight. Before it fires 40 emails, someone on the team should review the shortlist. interrupt() paused it. But who got pinged?',
               delay: '0.25s',
             },
             {
-              tag: '💬 Production engineer',
+              tag: '💬 Developer, production deploy',
               tagClass: 'bg-sky-100 text-sky-800',
-              href: null,
               title: '"When a thread is interrupted, nobody gets notified. No email, no Slack, no ping of any kind."',
               body: '',
-              note: '',
               delay: '0.4s',
             },
             {
-              tag: '💬 Production engineer',
+              tag: '💬 Developer, LangGraph community',
               tagClass: 'bg-sky-100 text-sky-800',
-              href: null,
-              title: "\"There's no built-in mechanism to say 'if nobody responds in 30 minutes, escalate to the backup approver.'\"",
+              title: '"There\'s no built-in mechanism to say \'if nobody responds in 30 minutes, escalate to the backup approver.\'"',
               body: '',
-              note: '',
               delay: '0.55s',
             },
           ].map((card) => (
@@ -166,23 +208,11 @@ export default function DocsPage() {
               className={`bg-white border border-slate-200 rounded-xl p-5 ${styles.fadeUp}`}
               style={{ animationDelay: card.delay }}
             >
-              {card.href ? (
-                <a
-                  href={card.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`inline-block text-[11px] font-bold px-2 py-0.5 rounded mb-3 ${card.tagClass} hover:opacity-80 underline underline-offset-2`}
-                >
-                  {card.tag}
-                </a>
-              ) : (
-                <span className={`inline-block text-[11px] font-bold px-2 py-0.5 rounded mb-3 ${card.tagClass}`}>
-                  {card.tag}
-                </span>
-              )}
+              <span className={`inline-block text-[11px] font-bold px-2 py-0.5 rounded mb-3 ${card.tagClass}`}>
+                {card.tag}
+              </span>
               <p className="text-sm font-semibold text-slate-800 leading-snug">{card.title}</p>
               {card.body && <p className="text-sm text-slate-500 mt-2 leading-relaxed">{card.body}</p>}
-              {card.note && <p className="text-[11px] text-slate-400 mt-2 italic">{card.note}</p>}
             </div>
           ))}
         </div>
@@ -192,8 +222,13 @@ export default function DocsPage() {
         >
           <span className="text-3xl">⚡</span>
           <div>
-            <p className="font-bold text-green-900 text-base">Approval Hub fills every gap — in 3 lines of code.</p>
-            <p className="text-green-800 text-sm mt-0.5 opacity-90">Dashboard · Email notifications · Audit trail · Escalation · Team routing. Open source. Free to host.</p>
+            <p className="font-bold text-green-900 text-base">Approval Hub fills every gap — deployed in 5 minutes, free forever.</p>
+            <p className="text-green-800 text-sm mt-0.5 opacity-90">
+              Dashboard · Email · Slack · Audit trail · Escalation · Team routing. Open source, self-hosted.{' '}
+              <span className="opacity-75">
+                And you&apos;re not alone — <a href="https://www.gartner.com/en/newsroom/press-releases/2025-09-30-gartner-survey-finds-just-15-percent-of-it-application-leaders-are-considering-piloting-or-deploying-fully-autonomous-ai-agents" target="_blank" rel="noopener noreferrer" className="underline">85% of teams building AI agents</a> say human oversight is non-negotiable (Gartner, 2025).
+              </span>
+            </p>
           </div>
         </div>
       </section>
