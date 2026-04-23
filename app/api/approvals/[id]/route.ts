@@ -1,6 +1,7 @@
 // app/api/approvals/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import https from 'https'
+import { createClient } from '@supabase/supabase-js'
 
 // Never cache — SDK polls this route to detect status changes
 export const dynamic = 'force-dynamic'
@@ -32,10 +33,9 @@ export async function GET(
   // Extract hostname (e.g. rfupdnwalegceczhghjn.supabase.co)
   const hostname = supabaseUrl.replace('https://', '').replace('http://', '').trim()
   // Build path manually — avoid URL class which percent-encodes * and ()
-  // _t= busts any edge/proxy cache that Supabase or intermediaries might apply
   const path = `/rest/v1/approvals?select=id,agent_name,action_description,agent_reasoning,assignee,assignee_type,escalate_to,timeout_minutes,status,decided_by,decision_note,created_at,decided_at,expires_at&id=eq.${params.id}`
 
-  const headers = {
+  const reqHeaders = {
     apikey: serviceKey,
     Authorization: `Bearer ${serviceKey}`,
     Accept: 'application/json',
@@ -44,35 +44,72 @@ export async function GET(
     Pragma: 'no-cache',
   }
 
-  let body: string
+  // --- Source A: Node https (completely bypasses Next.js fetch patch) ---
+  let httpsStatus: string | null = null
+  let httpsRows = 0
+  let rawBody = ''
   try {
-    body = await httpsGet(hostname, path, headers)
+    rawBody = await httpsGet(hostname, path, reqHeaders)
+    const rows = JSON.parse(rawBody) as Record<string, unknown>[]
+    httpsRows = Array.isArray(rows) ? rows.length : -1
+    httpsStatus = Array.isArray(rows) && rows.length > 0 ? String(rows[0].status) : null
   } catch {
-    return NextResponse.json({ error: 'Upstream error' }, { status: 502 })
+    httpsStatus = 'ERROR'
   }
 
-  let rows: unknown[]
-  try { rows = JSON.parse(body) } catch {
-    return NextResponse.json({ error: 'Parse error' }, { status: 500 })
+  // --- Source B: Fresh Supabase client (per-request, not module-level) ---
+  // Uses Node's native fetch via a brand-new client with explicit no-store
+  let sdkStatus: string | null = null
+  try {
+    const freshClient = createClient(supabaseUrl, serviceKey, {
+      global: {
+        fetch: (input: RequestInfo | URL, init?: RequestInit) =>
+          fetch(input, { ...init, cache: 'no-store' }),
+      },
+    })
+    const { data } = await freshClient
+      .from('approvals')
+      .select('id, status')
+      .eq('id', params.id)
+      .single()
+    sdkStatus = data?.status ?? null
+  } catch {
+    sdkStatus = 'ERROR'
   }
 
-  if (!Array.isArray(rows) || rows.length === 0) {
+  console.log(`[poll] id=${params.id} https=${httpsStatus} sdk=${sdkStatus} https_rows=${httpsRows}`)
+
+  // Use whichever source returns a decided status (approved/rejected/expired)
+  // If both agree on "pending", return pending. If one says decided, trust it.
+  const decidedStatuses = ['approved', 'rejected', 'expired', 'escalated']
+  const resolvedStatus =
+    decidedStatuses.includes(httpsStatus ?? '') ? httpsStatus :
+    decidedStatuses.includes(sdkStatus ?? '') ? sdkStatus :
+    httpsStatus ?? sdkStatus ?? 'pending'
+
+  // Parse the main row from the Node https result
+  let row: Record<string, unknown> = {}
+  try {
+    const rows = JSON.parse(rawBody) as Record<string, unknown>[]
+    if (Array.isArray(rows) && rows.length > 0) {
+      row = rows[0]
+    }
+  } catch { /* row stays empty */ }
+
+  if (!row.id) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
   }
 
-  // notifications_log is not included (no join) — defaults to [] in UI
-  const row = rows[0] as Record<string, unknown>
-  // DEBUG: log what we actually got from Supabase
-  console.log(`[poll] id=${params.id} got status=${row.status} total_rows=${rows.length}`)
-
   return NextResponse.json({
     ...row,
+    status: resolvedStatus,       // override with the most reliable status
     notifications_log: [],
     _debug: {
-      total_rows: rows.length,
+      https_status: httpsStatus,
+      sdk_status: sdkStatus,
+      https_rows: httpsRows,
       hostname,
       path,
-      all_statuses: (rows as Record<string, unknown>[]).map((r) => r.status),
     },
   }, {
     headers: { 'Cache-Control': 'no-store' },
