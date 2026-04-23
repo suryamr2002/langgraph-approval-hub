@@ -6,7 +6,8 @@ import type { InterruptPayload } from '@/types'
 
 function authorized(req: NextRequest): boolean {
   const header = req.headers.get('authorization') ?? ''
-  return header === `Bearer ${process.env.API_SECRET_TOKEN}`
+  const token = (process.env.API_SECRET_TOKEN ?? '').trim()
+  return header === `Bearer ${token}`
 }
 
 export async function POST(req: NextRequest) {
