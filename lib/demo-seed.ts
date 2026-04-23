@@ -1,10 +1,15 @@
 // lib/demo-seed.ts
 import { supabaseAdmin } from '@/lib/supabase'
 
+const mins = (n: number) => n * 60 * 1000
+const hrs  = (n: number) => n * 60 * mins(1)
+const days = (n: number) => n * 24 * hrs(1)
+
 export async function seedDemoData() {
-  const now = new Date()
+  const now = Date.now()
 
   const mockApprovals = [
+    // Escalated — arrived yesterday, already past its timeout
     {
       agent_name: 'Finance Agent',
       action_description: 'Process $4,200 refund batch for 12 customers who reported billing error on invoice #INV-2024-0441',
@@ -14,8 +19,10 @@ export async function seedDemoData() {
       escalate_to: 'cfo@example.com',
       timeout_minutes: 60,
       status: 'escalated',
-      expires_at: new Date(now.getTime() - 30 * 60 * 1000).toISOString(),
+      created_at: new Date(now - days(1) - hrs(2)).toISOString(),
+      expires_at: new Date(now - days(1) - hrs(1)).toISOString(),
     },
+    // Pending — submitted 3 hours ago, expires in 2 days
     {
       agent_name: 'HR Agent',
       action_description: 'Send offer letters to 3 candidates: Backend Engineer, Product Designer, DevOps Lead',
@@ -23,10 +30,12 @@ export async function seedDemoData() {
       assignee: 'priya@example.com',
       assignee_type: 'person',
       escalate_to: null,
-      timeout_minutes: 120,
+      timeout_minutes: 2880,   // 2 days
       status: 'pending',
-      expires_at: new Date(now.getTime() + 110 * 60 * 1000).toISOString(),
+      created_at: new Date(now - hrs(3)).toISOString(),
+      expires_at: new Date(now - hrs(3) + days(2)).toISOString(),
     },
+    // Pending — submitted 45 minutes ago, short timeout
     {
       agent_name: 'Security Agent',
       action_description: 'Revoke access for 2 offboarded users: james.smith@example.com, rachel.chen@example.com',
@@ -36,8 +45,10 @@ export async function seedDemoData() {
       escalate_to: null,
       timeout_minutes: 30,
       status: 'pending',
-      expires_at: new Date(now.getTime() + 25 * 60 * 1000).toISOString(),
+      created_at: new Date(now - mins(45)).toISOString(),
+      expires_at: new Date(now - mins(45) + mins(30)).toISOString(),
     },
+    // Pending — submitted 2 hours ago
     {
       agent_name: 'Outreach Agent',
       action_description: 'Send re-engagement email campaign to 1,400 inactive customers (last active 90+ days)',
@@ -47,8 +58,10 @@ export async function seedDemoData() {
       escalate_to: null,
       timeout_minutes: 60,
       status: 'pending',
-      expires_at: new Date(now.getTime() + 58 * 60 * 1000).toISOString(),
+      created_at: new Date(now - hrs(2)).toISOString(),
+      expires_at: new Date(now - hrs(2) + mins(60)).toISOString(),
     },
+    // Approved — created 4h ago, decided after 22 minutes (realistic response time)
     {
       agent_name: 'Finance Agent',
       action_description: 'Process $1,800 refund batch for 5 customers',
@@ -60,8 +73,9 @@ export async function seedDemoData() {
       status: 'approved',
       decided_by: 'cfo@example.com',
       decision_note: 'Confirmed with billing team',
-      decided_at: new Date(now.getTime() - 60 * 60 * 1000).toISOString(),
-      expires_at: new Date(now.getTime() - 30 * 60 * 1000).toISOString(),
+      created_at: new Date(now - hrs(4)).toISOString(),
+      decided_at: new Date(now - hrs(4) + mins(22)).toISOString(),
+      expires_at: new Date(now - hrs(4) + mins(60)).toISOString(),
     },
   ]
 
