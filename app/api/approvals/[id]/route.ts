@@ -32,6 +32,7 @@ export async function GET(
   // Extract hostname (e.g. rfupdnwalegceczhghjn.supabase.co)
   const hostname = supabaseUrl.replace('https://', '').replace('http://', '').trim()
   // Build path manually — avoid URL class which percent-encodes * and ()
+  // _t= busts any edge/proxy cache that Supabase or intermediaries might apply
   const path = `/rest/v1/approvals?select=id,agent_name,action_description,agent_reasoning,assignee,assignee_type,escalate_to,timeout_minutes,status,decided_by,decision_note,created_at,decided_at,expires_at&id=eq.${params.id}`
 
   const headers = {
