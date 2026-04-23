@@ -33,7 +33,10 @@ export async function GET(
   const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').trim()
   const serviceKey = (process.env.SUPABASE_SERVICE_ROLE_KEY ?? '').trim()
 
-  const url = `${supabaseUrl}/rest/v1/approvals?select=*,notifications_log(*)&id=eq.${params.id}`
+  // No join here — SDK only needs status; parentheses in notifications_log(*) get
+  // percent-encoded by the URL class, breaking the Supabase query.
+  // The dashboard detail page fetches notifications separately via a join on its own.
+  const url = `${supabaseUrl}/rest/v1/approvals?select=*&id=eq.${params.id}`
   const headers = {
     apikey: serviceKey,
     Authorization: `Bearer ${serviceKey}`,
