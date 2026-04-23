@@ -69,7 +69,7 @@ export default function ApprovalTable({
                     fresh ? 'bg-green-50 border-l-2 border-l-green-400' : ''
                   }`}
                 >
-                  <td className="px-4 py-3 align-top">
+                  <td className="px-4 py-3 align-top" title={`${a.agent_name} — ${a.action_description}`}>
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-gray-900 truncate">{a.agent_name}</span>
                       {fresh && (
@@ -80,7 +80,7 @@ export default function ApprovalTable({
                     </div>
                     <div className="text-xs text-gray-500 truncate mt-0.5">{a.action_description}</div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600 align-top truncate">{a.assignee}</td>
+                  <td className="px-4 py-3 text-sm text-gray-600 align-top truncate" title={a.assignee}>{a.assignee}</td>
                   <td className="px-4 py-3 text-sm text-gray-600 align-top whitespace-nowrap">{relativeTime(a.created_at)}</td>
                   <td className="px-4 py-3 align-top"><StatusBadge status={a.status} /></td>
                   <td className="px-4 py-3 align-top">

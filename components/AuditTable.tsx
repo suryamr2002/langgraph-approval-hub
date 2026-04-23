@@ -179,20 +179,24 @@ export default function AuditTable({ records: initial }: { records: AuditRecord[
             <tbody>
               {filtered.map((r) => (
                 <tr key={r.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3 text-xs text-gray-400 align-top whitespace-nowrap">
+                  <td className="px-4 py-3 text-xs text-gray-400 align-top whitespace-nowrap"
+                      title={r.decided_at ? new Date(r.decided_at).toLocaleString() : undefined}>
                     {r.decided_at ? formatDateTime(r.decided_at) : '—'}
                   </td>
-                  <td className="px-4 py-3 align-top">
+                  <td className="px-4 py-3 align-top"
+                      title={`${r.agent_name} — ${r.action_description}`}>
                     <div className="font-medium text-gray-900 truncate">{r.agent_name}</div>
                     <div className="text-xs text-gray-500 truncate mt-0.5">{r.action_description}</div>
                   </td>
                   <td className="px-4 py-3 align-top">
                     <StatusBadge status={r.status} />
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-700 align-top truncate">
+                  <td className="px-4 py-3 text-sm text-gray-700 align-top truncate"
+                      title={r.decided_by ?? undefined}>
                     {r.decided_by ?? '—'}
                   </td>
-                  <td className="px-4 py-3 text-xs text-gray-400 align-top truncate">
+                  <td className="px-4 py-3 text-xs text-gray-400 align-top truncate"
+                      title={r.decision_note ?? undefined}>
                     {r.decision_note ?? '—'}
                   </td>
                 </tr>

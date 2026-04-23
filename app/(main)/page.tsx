@@ -21,6 +21,11 @@ async function getData(status?: string): Promise<{ approvals: Approval[]; stats:
   }
 }
 
+const TAB_TITLES: Record<string, string> = {
+  pending:   'Pending Approvals',
+  escalated: 'Escalated Approvals',
+}
+
 export default async function DashboardPage({
   searchParams,
 }: {
@@ -29,12 +34,20 @@ export default async function DashboardPage({
   const activeStatus = searchParams.status ?? null
   const { approvals, stats } = await getData(activeStatus ?? undefined)
   const demoMode = process.env.DEMO_MODE === 'true'
+  const title = activeStatus ? (TAB_TITLES[activeStatus] ?? 'Approvals') : 'All Approvals'
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-gray-900">Pending Approvals</h1>
-        <span className="text-xs text-gray-400">Updates on refresh</span>
+        <h1 className="text-xl font-bold text-gray-900">{title}</h1>
+        {/* Realtime indicator */}
+        <div className="flex items-center gap-1.5 text-xs text-gray-400">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+          </span>
+          Live
+        </div>
       </div>
       <StatsBar stats={stats} />
       <div className="mt-6">
