@@ -29,7 +29,7 @@ export async function POST(
     return NextResponse.json({ error: 'Approval is already resolved' }, { status: 409 })
   }
 
-  const { error } = await supabaseAdmin
+  const { data: updated, error } = await supabaseAdmin
     .from('approvals')
     .update({
       status: body.decision,
@@ -38,8 +38,11 @@ export async function POST(
       decided_at: new Date().toISOString(),
     })
     .eq('id', params.id)
+    .select('id, status')
+    .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (!updated) return NextResponse.json({ error: 'Update matched no rows' }, { status: 500 })
 
-  return NextResponse.json({ status: body.decision })
+  return NextResponse.json({ status: updated.status })
 }
