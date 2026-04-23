@@ -29,7 +29,7 @@ export default function ApprovalDetailPage({ params }: { params: { id: string } 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         decision,
-        decided_by: 'approver@example.com',
+        decided_by: approval.assignee,
         note,
       }),
     })
