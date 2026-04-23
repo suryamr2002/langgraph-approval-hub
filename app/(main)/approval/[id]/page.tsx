@@ -51,6 +51,7 @@ export default function ApprovalDetailPage({ params }: { params: { id: string } 
     )
   }
 
+  const demoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true'
   const isResolved = !['pending', 'escalated'].includes(approval.status)
 
   return (
@@ -85,7 +86,7 @@ export default function ApprovalDetailPage({ params }: { params: { id: string } 
             </div>
           )}
 
-          {!isResolved && (
+          {!isResolved && !demoMode && (
             <div className="bg-white rounded-lg border border-gray-200 p-5">
               <h3 className="font-semibold text-sm text-gray-700 mb-3">Your decision</h3>
               <textarea
@@ -111,6 +112,13 @@ export default function ApprovalDetailPage({ params }: { params: { id: string } 
                   ✗ Reject
                 </button>
               </div>
+            </div>
+          )}
+          {!isResolved && demoMode && (
+            <div className="bg-white rounded-lg border border-gray-200 p-5">
+              <p className="text-sm text-gray-500 text-center py-2">
+                🎭 View-only demo — deploy your own instance to approve or reject requests.
+              </p>
             </div>
           )}
 
