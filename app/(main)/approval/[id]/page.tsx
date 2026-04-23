@@ -22,6 +22,7 @@ export default function ApprovalDetailPage({ params }: { params: { id: string } 
   }, [params.id])
 
   async function decide(decision: 'approved' | 'rejected') {
+    if (!approval) return
     setSubmitting(true)
     setError('')
     const res = await fetch(`/api/approvals/${params.id}/decide`, {
