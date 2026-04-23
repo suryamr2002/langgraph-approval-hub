@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import StatusBadge from './StatusBadge'
 import { formatDateTime } from '@/lib/formatDate'
 import type { ApprovalStatus } from '@/types'
+import { useRealtimeRefresh } from '@/lib/useRealtimeRefresh'
 
 interface AuditRecord {
   id: string
@@ -84,11 +85,8 @@ export default function AuditTable({ records: initial }: { records: AuditRecord[
   // Keep records in sync when server re-renders via router.refresh()
   useEffect(() => { setRecords(initial) }, [initial])
 
-  // Auto-refresh every 15 s — picks up new decisions without manual reload
-  useEffect(() => {
-    const id = setInterval(() => router.refresh(), 15_000)
-    return () => clearInterval(id)
-  }, [router])
+  // Realtime: re-render instantly when any approval is decided
+  useRealtimeRefresh()
 
   const filtered = records.filter((r) => {
     if (!passesTimeFilter(r, timeFilter)) return false

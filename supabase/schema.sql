@@ -36,3 +36,7 @@ create table if not exists notifications_log (
 -- Index for fast status queries
 create index if not exists approvals_status_idx on approvals(status);
 create index if not exists approvals_expires_at_idx on approvals(expires_at);
+
+-- Enable Realtime so the dashboard updates instantly when any approval changes
+-- Run this once — if it errors "already member", that's fine.
+alter publication supabase_realtime add table approvals;

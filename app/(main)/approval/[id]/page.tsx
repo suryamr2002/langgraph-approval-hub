@@ -41,9 +41,8 @@ export default function ApprovalDetailPage({ params }: { params: { id: string } 
       setSubmitting(false)
       return
     }
-    // Invalidate the router cache so the dashboard re-fetches fresh data
-    router.refresh()
-    router.push('/')
+    // Hard navigation — bypasses Next.js router cache entirely, always loads fresh data
+    window.location.href = '/'
   }
 
   if (!approval) {
@@ -60,7 +59,7 @@ export default function ApprovalDetailPage({ params }: { params: { id: string } 
     <div>
       <div className="flex items-center gap-3 mb-6">
         <button
-          onClick={() => { router.refresh(); router.push('/') }}
+          onClick={() => { window.location.href = '/' }}
           className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
         >
           ← Back

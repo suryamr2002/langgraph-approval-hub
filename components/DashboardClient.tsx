@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import ApprovalTable from './ApprovalTable'
 import type { Approval } from '@/types'
+import { useRealtimeRefresh } from '@/lib/useRealtimeRefresh'
 
 const TABS = [
   { label: 'All', status: null, href: '/' },
@@ -53,16 +54,13 @@ export default function DashboardClient({
   demoMode: boolean
 }) {
   const router = useRouter()
-  const [search, setSearch] = useState('')          // agent/action search
-  const [assigneeFilter, setAssigneeFilter] = useState('')  // column filter by email
+  const [search, setSearch] = useState('')
+  const [assigneeFilter, setAssigneeFilter] = useState('')
   const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('all')
   const [resetting, setResetting] = useState(false)
 
-  // Auto-refresh every 15 s
-  useEffect(() => {
-    const id = setInterval(() => router.refresh(), 15_000)
-    return () => clearInterval(id)
-  }, [router])
+  // Realtime: re-render instantly when any approval changes in Supabase
+  useRealtimeRefresh()
 
   const filtered = approvals.filter((a) => {
     if (search.trim()) {
