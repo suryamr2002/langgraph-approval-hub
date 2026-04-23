@@ -7,7 +7,21 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'LangGraph Approval Hub',
-  description: 'Enterprise human-in-the-loop approval dashboard for LangGraph agents',
+  description: 'Human-in-the-loop approvals for LangGraph agents — real-time dashboard, audit log, email/Slack notifications. Deploy free on Vercel + Supabase.',
+  keywords: ['langgraph', 'human-in-the-loop', 'ai agents', 'approval workflow', 'nextjs', 'supabase'],
+  authors: [{ name: 'Surya Murugan', url: 'https://github.com/suryamr2002' }],
+  openGraph: {
+    title: '⚡ LangGraph Approval Hub',
+    description: 'Human-in-the-loop approvals for LangGraph agents — deploy free in 5 minutes.',
+    url: 'https://langgraph-approval-hub.vercel.app',
+    siteName: 'LangGraph Approval Hub',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: '⚡ LangGraph Approval Hub',
+    description: 'Human-in-the-loop approvals for LangGraph agents — deploy free in 5 minutes.',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

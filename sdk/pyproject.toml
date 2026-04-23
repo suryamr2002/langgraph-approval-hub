@@ -11,4 +11,4 @@ requires-python = ">=3.9"
 dependencies = ["requests>=2.28"]
 
 [project.urls]
-Homepage = "https://github.com/surya-mr/langgraph-approval-hub"
+Homepage = "https://github.com/suryamr2002/langgraph-approval-hub"
