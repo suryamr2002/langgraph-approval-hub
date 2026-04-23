@@ -13,7 +13,7 @@ decision = request_approval(
     agent_name="Finance Agent",
     action_description="Process $4,200 refund for 12 customers",
     assignee="alice@acme.com",
-    assignee_type="person",
+    assignee_type="email",
 )
 
 if decision == "approved":
@@ -34,7 +34,7 @@ const ESCALATION_CODE = `decision = request_approval(
     agent_name="Billing Agent",
     action_description="Issue $12,000 credit to enterprise account ACME-001",
     assignee="billing@acme.com",
-    assignee_type="person",
+    assignee_type="email",
     escalate_to="cfo@acme.com",  # notified if no response
     timeout_minutes=30,           # escalates after 30 min
 )`
@@ -75,6 +75,37 @@ except RuntimeError as e:
 
 if decision == "approved":
     execute_wire_transfer()`
+
+const ASYNC_CODE = `from langgraph_approval_hub import submit_approval, get_decision
+
+# Submit — returns immediately, agent continues
+approval_id = submit_approval(
+    hub_url="https://your-hub.vercel.app",
+    api_token="your-api-secret-token",
+    agent_name="OutreachBot",
+    action_description="Send cold email campaign to 200 leads",
+    assignee="marketing@company.com",
+    assignee_type="email",
+)
+
+# ... do other work while waiting ...
+
+# Check the decision later (non-blocking)
+result = get_decision(
+    hub_url="https://your-hub.vercel.app",
+    api_token="your-api-secret-token",
+    approval_id=approval_id,
+)
+print(result["status"])  # "pending" | "approved" | "rejected" | "expired"`
+
+const LIST_PENDING_CODE = `from langgraph_approval_hub import get_pending
+
+pending = get_pending(
+    hub_url="https://your-hub.vercel.app",
+    api_token="your-api-secret-token",
+)
+for item in pending:
+    print(item["id"], item["agent_name"], item["status"])`
 
 function CodeBlock({ code, label }: { code: string; label?: string }) {
   return (
@@ -376,6 +407,22 @@ export default function DocsPage() {
             Never treat a missing decision as implicit approval.
           </Callout>
         </div>
+
+        <div id="async" className="mb-10">
+          <h3 className="text-base font-bold text-slate-900 mb-1">Non-blocking (async) pattern</h3>
+          <p className="text-sm text-slate-500 mb-2">
+            Use <code className="bg-slate-100 px-1 rounded font-mono text-xs">submit_approval()</code> when
+            you want to continue working while waiting for a decision. Check back later with{' '}
+            <code className="bg-slate-100 px-1 rounded font-mono text-xs">get_decision()</code>.
+          </p>
+          <CodeBlock code={ASYNC_CODE} label="Python" />
+          <p className="text-sm text-slate-500 mb-2 mt-4">List all pending approvals:</p>
+          <CodeBlock code={LIST_PENDING_CODE} label="Python" />
+          <Callout type="tip">
+            New in v0.2.0. Install with{' '}
+            <code className="bg-green-100 px-1 rounded font-mono text-xs">pip install langgraph-approval-hub==0.2.0</code>
+          </Callout>
+        </div>
       </section>
 
       {/* ── ENTERPRISE ── */}
@@ -463,11 +510,11 @@ export default function DocsPage() {
                 ['agent_name', 'str', true, 'Name shown in the dashboard'],
                 ['action_description', 'str', true, 'Plain-English description of what the agent wants to do'],
                 ['assignee', 'str', true, 'Email address or team name'],
-                ['assignee_type', '"person" | "team"', true, 'Whether assignee is an individual or a team'],
+                ['assignee_type', '"email" | "team"', true, 'Whether assignee is an individual or a team'],
                 ['agent_reasoning', 'str', false, 'Step-by-step reasoning shown to the approver on the detail page'],
                 ['escalate_to', 'str', false, 'Email to escalate to if timeout exceeded'],
                 ['timeout_minutes', 'int', false, 'Minutes before escalation triggers (default: 60)'],
-                ['poll_interval', 'int', false, 'Seconds between status polls (default: 10)'],
+                ['poll_interval', 'int', false, 'Seconds between status polls — request_approval() only (default: 5)'],
               ] as [string, string, boolean, string][]).map(([param, type, req, desc]) => (
                 <tr key={param} className="border-b border-slate-100">
                   <td className="border border-slate-200 px-3 py-2">
