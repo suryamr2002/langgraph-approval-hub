@@ -474,7 +474,7 @@ export default function DocsPage() {
                 ['GET', '/api/teams', 'None', 'List all configured teams'],
                 ['POST', '/api/teams', 'None', 'Create or update a team'],
               ] as [string, string, string, string][]).map(([method, route, auth, desc]) => (
-                <tr key={route} className="border-b border-slate-100">
+                <tr key={method + route} className="border-b border-slate-100">
                   <td className="border border-slate-200 px-3 py-2">
                     <code className={`text-xs font-bold px-1.5 py-0.5 rounded font-mono ${method === 'POST' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>{method}</code>
                   </td>
