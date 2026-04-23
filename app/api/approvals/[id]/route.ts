@@ -61,7 +61,16 @@ export async function GET(
   // DEBUG: log what we actually got from Supabase
   console.log(`[poll] id=${params.id} got status=${row.status} total_rows=${rows.length}`)
 
-  return NextResponse.json({ ...row, notifications_log: [] }, {
+  return NextResponse.json({
+    ...row,
+    notifications_log: [],
+    _debug: {
+      total_rows: rows.length,
+      hostname,
+      path,
+      all_statuses: (rows as Record<string, unknown>[]).map((r) => r.status),
+    },
+  }, {
     headers: { 'Cache-Control': 'no-store' },
   })
 }
