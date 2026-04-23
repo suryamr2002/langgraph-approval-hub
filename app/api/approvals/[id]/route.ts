@@ -46,12 +46,10 @@ export async function GET(
 
   // --- Source A: Node https (completely bypasses Next.js fetch patch) ---
   let httpsStatus: string | null = null
-  let httpsRows = 0
   let rawBody = ''
   try {
     rawBody = await httpsGet(hostname, path, reqHeaders)
     const rows = JSON.parse(rawBody) as Record<string, unknown>[]
-    httpsRows = Array.isArray(rows) ? rows.length : -1
     httpsStatus = Array.isArray(rows) && rows.length > 0 ? String(rows[0].status) : null
   } catch {
     httpsStatus = 'ERROR'
@@ -77,7 +75,6 @@ export async function GET(
     sdkStatus = 'ERROR'
   }
 
-  console.log(`[poll] id=${params.id} https=${httpsStatus} sdk=${sdkStatus} https_rows=${httpsRows}`)
 
   // Use whichever source returns a decided status (approved/rejected/expired)
   // If both agree on "pending", return pending. If one says decided, trust it.
@@ -104,13 +101,6 @@ export async function GET(
     ...row,
     status: resolvedStatus,       // override with the most reliable status
     notifications_log: [],
-    _debug: {
-      https_status: httpsStatus,
-      sdk_status: sdkStatus,
-      https_rows: httpsRows,
-      hostname,
-      path,
-    },
   }, {
     headers: { 'Cache-Control': 'no-store' },
   })
