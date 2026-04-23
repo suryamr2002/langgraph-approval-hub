@@ -1,4 +1,6 @@
 // app/(main)/audit/page.tsx
+export const dynamic = 'force-dynamic'
+
 import AuditTable from '@/components/AuditTable'
 
 async function getAuditRecords() {
@@ -19,16 +21,8 @@ export default async function AuditPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold text-gray-900">Audit Log</h1>
-        <a
-          href="/api/audit"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-green-600 hover:underline font-medium"
-        >
-          ↗ Export JSON
-        </a>
+        <span className="text-sm text-gray-400">{total ?? 0} total resolved decisions</span>
       </div>
-      <p className="text-sm text-gray-500 mb-4">{total ?? 0} total resolved decisions</p>
       <AuditTable records={records} />
     </div>
   )

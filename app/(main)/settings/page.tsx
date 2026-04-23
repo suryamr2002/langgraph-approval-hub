@@ -2,6 +2,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import type { Team } from '@/types'
+import { setTimeFormat } from '@/lib/formatDate'
 
 type NotifStatus = { email: boolean; slack: boolean }
 type TestState = 'idle' | 'sending' | 'ok' | 'error'
@@ -12,6 +13,17 @@ export default function SettingsPage() {
   const [members, setMembers] = useState('')
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
+
+  // Time format preference (persisted in localStorage)
+  const [timeFormat, setTimeFormatState] = useState<'12h' | '24h'>('12h')
+  useEffect(() => {
+    const saved = localStorage.getItem('timeFormat') as '12h' | '24h' | null
+    if (saved) setTimeFormatState(saved)
+  }, [])
+  function toggleTimeFormat(fmt: '12h' | '24h') {
+    setTimeFormatState(fmt)
+    setTimeFormat(fmt)
+  }
 
   // Notifications
   const [notifStatus, setNotifStatus] = useState<NotifStatus | null>(null)
@@ -100,6 +112,31 @@ export default function SettingsPage() {
     <div className="max-w-2xl">
       <h1 className="text-xl font-bold text-gray-900 mb-8">Settings</h1>
 
+      {/* ── Time format ── */}
+      <section className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+        <h2 className="font-semibold text-gray-800 mb-1">Display</h2>
+        <p className="text-sm text-gray-500 mb-4">Choose how timestamps are shown across the app.</p>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-700 font-medium w-28">Time format</span>
+          <div className="flex rounded-lg border border-gray-200 overflow-hidden text-sm font-medium">
+            {(['12h', '24h'] as const).map((fmt) => (
+              <button
+                key={fmt}
+                onClick={() => toggleTimeFormat(fmt)}
+                className={`px-4 py-2 transition-colors ${
+                  timeFormat === fmt
+                    ? 'bg-green-600 text-white'
+                    : 'bg-white text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                {fmt === '12h' ? '12 h  (3:45 PM)' : '24 h  (15:45)'}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Teams ── */}
       <section className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
         <h2 className="font-semibold text-gray-800 mb-1">Teams</h2>
         <p className="text-sm text-gray-500 mb-4">

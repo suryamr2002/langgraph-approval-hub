@@ -14,9 +14,9 @@ export default function Sidebar() {
   const path = usePathname()
   return (
     <aside className="w-52 shrink-0 border-r border-gray-200 bg-white flex flex-col py-6 px-3 min-h-screen">
-      <div className="px-3 mb-8 text-lg font-black text-green-600 tracking-tight">
+      <Link href="/" className="px-3 mb-8 text-lg font-black text-green-600 tracking-tight flex items-center gap-1 hover:opacity-80 transition-opacity">
         ⚡ Approval Hub
-      </div>
+      </Link>
       <nav className="flex flex-col gap-1">
         {nav.map((item) => (
           <Link
