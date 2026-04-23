@@ -120,49 +120,69 @@ export default function DocsPage() {
         <SectionTitle
           eyebrow="Why this exists"
           title="LangGraph gives you interrupt(). Everything else is your problem."
-          sub="The primitive exists — pause an agent and wait for a human. But who gets notified? Where do they decide? What if they don't respond? These were real complaints from engineers running LangGraph in production. They're now closed. The gap remains."
+          sub="LangGraph's interrupt() pauses an agent and waits for a human — but that's all it does. No notification, no dashboard, no escalation. These were real GitHub complaints from production engineers. LangGraph has since closed the issues. The workflow gap they described still exists."
         />
         <div className="grid grid-cols-2 gap-3">
           {[
             {
-              tag: '✓ GitHub Issue #6270 · 47 upvotes · Closed',
-              tagClass: 'bg-slate-100 text-slate-600',
+              tag: 'GitHub Issue #6270 · 47 upvotes',
+              tagClass: 'bg-amber-100 text-amber-800',
+              href: 'https://github.com/langchain-ai/langgraph/issues/6270',
               title: "Messages from nested agents don't stream after interrupt/resume",
               body: "The agent silently pauses. There's no way to show the approver what's happening or why.",
+              note: 'Closed by LangGraph — the notification gap remains.',
               delay: '0.1s',
             },
             {
-              tag: '✓ GitHub Issue #3421 · 31 upvotes · Closed',
-              tagClass: 'bg-slate-100 text-slate-600',
+              tag: 'GitHub Issue #3421 · 31 upvotes',
+              tagClass: 'bg-amber-100 text-amber-800',
+              href: 'https://github.com/langchain-ai/langgraph/issues/3421',
               title: 'Custom auth for human-in-the-loop is locked behind the enterprise plan',
-              body: "Teams needed approval routing. The open-source tier offered none. Build it yourself or pay up.",
+              body: "Teams needed approval routing. The open-source tier offered none.",
+              note: 'Closed by LangGraph — teams still need a ready-made workflow.',
               delay: '0.25s',
             },
             {
               tag: '💬 Production engineer',
               tagClass: 'bg-sky-100 text-sky-800',
+              href: null,
               title: '"When a thread is interrupted, nobody gets notified. No email, no Slack, no ping of any kind."',
               body: '',
+              note: '',
               delay: '0.4s',
             },
             {
               tag: '💬 Production engineer',
               tagClass: 'bg-sky-100 text-sky-800',
+              href: null,
               title: "\"There's no built-in mechanism to say 'if nobody responds in 30 minutes, escalate to the backup approver.'\"",
               body: '',
+              note: '',
               delay: '0.55s',
             },
           ].map((card) => (
             <div
-              key={card.tag}
+              key={card.tag + card.title}
               className={`bg-white border border-slate-200 rounded-xl p-5 ${styles.fadeUp}`}
               style={{ animationDelay: card.delay }}
             >
-              <span className={`inline-block text-[11px] font-bold px-2 py-0.5 rounded mb-3 ${card.tagClass}`}>
-                {card.tag}
-              </span>
+              {card.href ? (
+                <a
+                  href={card.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`inline-block text-[11px] font-bold px-2 py-0.5 rounded mb-3 ${card.tagClass} hover:opacity-80 underline underline-offset-2`}
+                >
+                  {card.tag}
+                </a>
+              ) : (
+                <span className={`inline-block text-[11px] font-bold px-2 py-0.5 rounded mb-3 ${card.tagClass}`}>
+                  {card.tag}
+                </span>
+              )}
               <p className="text-sm font-semibold text-slate-800 leading-snug">{card.title}</p>
               {card.body && <p className="text-sm text-slate-500 mt-2 leading-relaxed">{card.body}</p>}
+              {card.note && <p className="text-[11px] text-slate-400 mt-2 italic">{card.note}</p>}
             </div>
           ))}
         </div>
