@@ -1,11 +1,13 @@
 // app/api/audit/route.ts
 import { NextRequest, NextResponse } from 'next/server'
+import { unstable_noStore as noStore } from 'next/cache'
 import { supabaseAdmin } from '@/lib/supabase'
 
 // Never cache — audit log must reflect latest decisions
 export const dynamic = 'force-dynamic'
 
 export async function GET(req: NextRequest) {
+  noStore()
   const { searchParams } = new URL(req.url)
   const page = parseInt(searchParams.get('page') ?? '0')
   const pageSize = 50

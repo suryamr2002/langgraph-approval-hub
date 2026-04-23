@@ -1,5 +1,6 @@
 // app/api/approvals/route.ts
 import { NextRequest, NextResponse } from 'next/server'
+import { unstable_noStore as noStore } from 'next/cache'
 import { supabaseAdmin } from '@/lib/supabase'
 import { checkAndEscalate } from '@/lib/escalation'
 import type { DashboardStats } from '@/types'
@@ -8,6 +9,7 @@ import type { DashboardStats } from '@/types'
 export const dynamic = 'force-dynamic'
 
 export async function GET(req: NextRequest) {
+  noStore()
   await checkAndEscalate()
 
   const { searchParams } = new URL(req.url)
