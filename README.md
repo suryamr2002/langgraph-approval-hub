@@ -258,6 +258,44 @@ Route approvals to a group — any member can approve:
 
 ---
 
+## Demo mode vs Live mode
+
+The app has two modes controlled by a single environment variable:
+
+| | `NEXT_PUBLIC_DEMO_MODE=true` | `NEXT_PUBLIC_DEMO_MODE=false` (default) |
+|---|---|---|
+| Dashboard | View only | Full access |
+| Approval detail | See all fields, buttons disabled | Approve / reject |
+| Settings | See all config, inputs disabled | Create teams, test notifications |
+| Audit log | Read + export | Read + export |
+| Reset button | Visible, disabled | Hidden |
+
+### How to test both modes locally
+
+**Read-only demo mode:**
+```bash
+NEXT_PUBLIC_DEMO_MODE=true npm run dev
+# Visit http://localhost:3000
+# ✓ All pages load, all data visible
+# ✓ Approve/Reject buttons are greyed out, not clickable
+# ✓ Settings inputs are disabled
+# ✓ Reset button is greyed out
+```
+
+**Live mode (full functionality):**
+```bash
+NEXT_PUBLIC_DEMO_MODE=false npm run dev   # or just: npm run dev
+# Visit http://localhost:3000
+# ✓ Approve/Reject buttons are active
+# ✓ Settings inputs work — create a team, send a test notification
+# ✓ Reset button hidden (not a demo)
+```
+
+> **For the public demo instance:** set `NEXT_PUBLIC_DEMO_MODE=true` in Vercel environment variables.  
+> **For your own deployment:** leave it unset or set to `false`.
+
+---
+
 ## Local Development
 
 ```bash

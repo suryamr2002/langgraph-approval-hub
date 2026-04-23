@@ -8,6 +8,7 @@ type NotifStatus = { email: boolean; slack: boolean }
 type TestState = 'idle' | 'sending' | 'ok' | 'error'
 
 export default function SettingsPage() {
+  const demoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true'
   const [teams, setTeams] = useState<Team[]>([])
   const [name, setName] = useState('')
   const [members, setMembers] = useState('')
@@ -143,6 +144,12 @@ export default function SettingsPage() {
           Create named teams so agents can route approvals to a group. Any member can approve.
         </p>
 
+        {demoMode && (
+          <div className="mb-4 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 flex items-center gap-2">
+            🔒 Read-only demo — inputs are disabled. Deploy your own instance to configure teams.
+          </div>
+        )}
+
         {teams.length > 0 && (
           <div className="mb-4 space-y-2">
             {teams.map((t) => (
@@ -161,18 +168,20 @@ export default function SettingsPage() {
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
+            disabled={demoMode}
             placeholder="Team name (e.g. finance-team)"
-            className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-200"
+            className={`w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-200 ${demoMode ? 'bg-gray-50 cursor-not-allowed opacity-60' : ''}`}
           />
           <input
             value={members}
             onChange={(e) => setMembers(e.target.value)}
+            disabled={demoMode}
             placeholder="Member emails, comma-separated"
-            className="w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-200"
+            className={`w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-200 ${demoMode ? 'bg-gray-50 cursor-not-allowed opacity-60' : ''}`}
           />
           <button
             onClick={saveTeam}
-            disabled={saving || !name.trim()}
+            disabled={saving || !name.trim() || demoMode}
             className="bg-green-500 text-white rounded-md px-4 py-2 text-sm font-semibold hover:bg-green-600 disabled:opacity-50 transition-colors"
           >
             {saving ? 'Saving...' : 'Save Team'}
@@ -189,6 +198,12 @@ export default function SettingsPage() {
           <code className="bg-gray-100 px-1 rounded text-xs">SLACK_WEBHOOK_URL</code> in your
           environment variables to enable notifications. Both are optional and free.
         </p>
+
+        {demoMode && (
+          <div className="mb-4 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 flex items-center gap-2">
+            🔒 Read-only demo — notification testing is disabled.
+          </div>
+        )}
 
         {/* Status row */}
         <div className="flex gap-3 mb-6">
@@ -213,12 +228,12 @@ export default function SettingsPage() {
               value={testEmail}
               onChange={(e) => setTestEmail(e.target.value)}
               placeholder="you@example.com"
-              disabled={!notifStatus?.email}
+              disabled={!notifStatus?.email || demoMode}
               className="flex-1 border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-200 disabled:bg-gray-50 disabled:text-gray-400"
             />
             <button
               onClick={sendTestEmail}
-              disabled={!notifStatus?.email || emailTest === 'sending' || !testEmail.trim()}
+              disabled={!notifStatus?.email || emailTest === 'sending' || !testEmail.trim() || demoMode}
               className="bg-green-500 text-white rounded-md px-4 py-2 text-sm font-semibold hover:bg-green-600 disabled:opacity-40 transition-colors whitespace-nowrap"
             >
               {emailTest === 'sending' ? 'Sending…' : 'Send test'}
@@ -241,7 +256,7 @@ export default function SettingsPage() {
           <p className="text-sm font-medium text-gray-700 mb-2">Send a test Slack message</p>
           <button
             onClick={sendTestSlack}
-            disabled={!notifStatus?.slack || slackTest === 'sending'}
+            disabled={!notifStatus?.slack || slackTest === 'sending' || demoMode}
             className="bg-gray-800 text-white rounded-md px-4 py-2 text-sm font-semibold hover:bg-gray-700 disabled:opacity-40 transition-colors"
           >
             {slackTest === 'sending' ? 'Sending…' : 'Send test message'}

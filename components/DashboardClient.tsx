@@ -58,9 +58,16 @@ export default function DashboardClient({
   const [assigneeFilter, setAssigneeFilter] = useState('')
   const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('all')
   const [resetting, setResetting] = useState(false)
-
   // Realtime: re-render instantly when any approval changes in Supabase
   useRealtimeRefresh()
+
+  async function handleReset() {
+    if (resetting) return
+    setResetting(true)
+    await fetch('/api/demo/seed', { method: 'POST' })
+    setResetting(false)
+    router.refresh()
+  }
 
   const filtered = approvals.filter((a) => {
     if (search.trim()) {
@@ -78,13 +85,6 @@ export default function DashboardClient({
   })
 
   const hasFilters = !!(search.trim() || assigneeFilter.trim() || periodFilter !== 'all')
-
-  async function handleReset() {
-    setResetting(true)
-    await fetch('/api/demo/seed', { method: 'POST' })
-    router.refresh()
-    setResetting(false)
-  }
 
   return (
     <div>
@@ -109,7 +109,7 @@ export default function DashboardClient({
           })}
         </div>
 
-        {/* Agent / action search */}
+        {/* Agent / action search + reset button */}
         <div className="flex items-center gap-2">
           <input
             type="text"
@@ -118,16 +118,14 @@ export default function DashboardClient({
             onChange={(e) => setSearch(e.target.value)}
             className="border border-gray-200 rounded-md px-3 py-1.5 text-sm text-gray-900 placeholder:text-gray-400 w-52 focus:outline-none focus:ring-2 focus:ring-green-500"
           />
-          {demoMode && (
-            <button
-              onClick={handleReset}
-              disabled={resetting}
-              title="Reset demo data"
-              className="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50"
-            >
-              {resetting ? '…' : '↺'}
-            </button>
-          )}
+          <button
+            onClick={demoMode ? undefined : handleReset}
+            disabled={resetting || demoMode}
+            title={demoMode ? 'Read-only demo — data stays fixed' : 'Reset demo data'}
+            className={`p-1.5 rounded-md transition-colors ${demoMode ? 'text-gray-300 cursor-not-allowed' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100 disabled:opacity-50'}`}
+          >
+            ↺
+          </button>
         </div>
       </div>
 

@@ -86,39 +86,49 @@ export default function ApprovalDetailPage({ params }: { params: { id: string } 
             </div>
           )}
 
-          {!isResolved && !demoMode && (
+          {!isResolved && (
             <div className="bg-white rounded-lg border border-gray-200 p-5">
-              <h3 className="font-semibold text-sm text-gray-700 mb-3">Your decision</h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold text-sm text-gray-700">Your decision</h3>
+                {demoMode && (
+                  <span className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">
+                    🔒 Read-only demo
+                  </span>
+                )}
+              </div>
               <textarea
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                placeholder="Optional note (saved to audit log)..."
-                className="w-full border border-gray-200 rounded-md p-3 text-sm text-gray-900 placeholder:text-gray-400 resize-none h-20 mb-3 focus:outline-none focus:ring-2 focus:ring-green-200"
+                disabled={demoMode}
+                placeholder={demoMode ? 'Read-only demo — deploy your own to add notes' : 'Optional note (saved to audit log)...'}
+                className={`w-full border border-gray-200 rounded-md p-3 text-sm text-gray-900 placeholder:text-gray-400 resize-none h-20 mb-3 focus:outline-none focus:ring-2 focus:ring-green-200 ${demoMode ? 'bg-gray-50 cursor-not-allowed opacity-60' : ''}`}
               />
               {error && <p className="text-red-500 text-xs mb-3">{error}</p>}
               <div className="flex gap-3">
                 <button
                   onClick={() => decide('approved')}
-                  disabled={submitting}
-                  className="flex-1 bg-green-500 text-white rounded-md py-2.5 font-semibold text-sm hover:bg-green-600 disabled:opacity-50 transition-colors"
+                  disabled={submitting || demoMode}
+                  title={demoMode ? 'Read-only demo — deploy your own to approve' : undefined}
+                  className={`flex-1 bg-green-500 text-white rounded-md py-2.5 font-semibold text-sm transition-colors ${demoMode ? 'opacity-40 cursor-not-allowed' : 'hover:bg-green-600 disabled:opacity-50'}`}
                 >
                   ✓ Approve
                 </button>
                 <button
                   onClick={() => decide('rejected')}
-                  disabled={submitting}
-                  className="flex-1 border border-red-300 text-red-600 rounded-md py-2.5 font-semibold text-sm hover:bg-red-50 disabled:opacity-50 transition-colors"
+                  disabled={submitting || demoMode}
+                  title={demoMode ? 'Read-only demo — deploy your own to reject' : undefined}
+                  className={`flex-1 border border-red-300 text-red-600 rounded-md py-2.5 font-semibold text-sm transition-colors ${demoMode ? 'opacity-40 cursor-not-allowed' : 'hover:bg-red-50 disabled:opacity-50'}`}
                 >
                   ✗ Reject
                 </button>
               </div>
-            </div>
-          )}
-          {!isResolved && demoMode && (
-            <div className="bg-white rounded-lg border border-gray-200 p-5">
-              <p className="text-sm text-gray-500 text-center py-2">
-                🎭 View-only demo — deploy your own instance to approve or reject requests.
-              </p>
+              {demoMode && (
+                <p className="text-xs text-center text-gray-400 mt-3">
+                  <a href="https://github.com/suryamr2002/langgraph-approval-hub" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">
+                    Deploy your own instance →
+                  </a>
+                </p>
+              )}
             </div>
           )}
 
