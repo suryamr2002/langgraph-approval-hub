@@ -2,6 +2,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 
+// Never cache — SDK polls this route to detect status changes
+export const dynamic = 'force-dynamic'
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: { id: string } }
@@ -13,5 +16,8 @@ export async function GET(
     .single()
 
   if (error) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-  return NextResponse.json(data)
+
+  return NextResponse.json(data, {
+    headers: { 'Cache-Control': 'no-store' },
+  })
 }

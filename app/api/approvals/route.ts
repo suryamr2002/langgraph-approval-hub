@@ -4,6 +4,9 @@ import { supabaseAdmin } from '@/lib/supabase'
 import { checkAndEscalate } from '@/lib/escalation'
 import type { DashboardStats } from '@/types'
 
+// Never cache — dashboard polls this for live pending counts
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: NextRequest) {
   await checkAndEscalate()
 
