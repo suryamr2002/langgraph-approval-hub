@@ -91,7 +91,7 @@ export default function ApprovalDetailPage({ params }: { params: { id: string } 
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="Optional note (saved to audit log)..."
-                className="w-full border border-gray-200 rounded-md p-3 text-sm resize-none h-20 mb-3 focus:outline-none focus:ring-2 focus:ring-green-200"
+                className="w-full border border-gray-200 rounded-md p-3 text-sm text-gray-900 placeholder:text-gray-400 resize-none h-20 mb-3 focus:outline-none focus:ring-2 focus:ring-green-200"
               />
               {error && <p className="text-red-500 text-xs mb-3">{error}</p>}
               <div className="flex gap-3">
