@@ -15,3 +15,10 @@ sdk/*.egg-info/
 .env.vercel.tmp
 tsconfig.tsbuildinfo
 next-env.d.ts
+
+# SDK development artifacts
+sdk/build/
+sdk/self_test.py
+
+# Claude Code
+.claude/
