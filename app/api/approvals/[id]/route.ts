@@ -39,6 +39,9 @@ export async function GET(
     apikey: serviceKey,
     Authorization: `Bearer ${serviceKey}`,
     Accept: 'application/json',
+    // Tell any upstream proxy/edge (Supabase CDN, Cloudflare, etc.) not to serve cached response
+    'Cache-Control': 'no-cache, no-store',
+    Pragma: 'no-cache',
   }
 
   let body: string
