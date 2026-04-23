@@ -1,7 +1,6 @@
 // app/(main)/approval/[id]/page.tsx
 'use client'
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import StatusBadge from '@/components/StatusBadge'
 import Timeline from '@/components/Timeline'
 import type { Approval, NotificationLog } from '@/types'
@@ -10,7 +9,6 @@ import { formatDateTime } from '@/lib/formatDate'
 type ApprovalWithLogs = Approval & { notifications_log: NotificationLog[] }
 
 export default function ApprovalDetailPage({ params }: { params: { id: string } }) {
-  const router = useRouter()
   const [approval, setApproval] = useState<ApprovalWithLogs | null>(null)
   const [note, setNote] = useState('')
   const [submitting, setSubmitting] = useState(false)

@@ -1,7 +1,6 @@
 // components/AuditTable.tsx
 'use client'
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import StatusBadge from './StatusBadge'
 import { formatDateTime } from '@/lib/formatDate'
 import type { ApprovalStatus } from '@/types'
@@ -76,7 +75,6 @@ function FilterBtn({
 }
 
 export default function AuditTable({ records: initial }: { records: AuditRecord[] }) {
-  const router = useRouter()
   const [records, setRecords] = useState(initial)
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('all')
   const [decisionFilter, setDecisionFilter] = useState<DecisionFilter>('all')
