@@ -8,7 +8,7 @@ type NotifStatus = { email: boolean; slack: boolean }
 type TestState = 'idle' | 'sending' | 'ok' | 'error'
 
 export default function SettingsPage() {
-  const demoMode = process.env.NEXT_PUBLIC_DEMO_MODE === 'true'
+  const demoMode = process.env.NEXT_PUBLIC_DEMO_MODE !== 'true'
   const [teams, setTeams] = useState<Team[]>([])
   const [name, setName] = useState('')
   const [members, setMembers] = useState('')

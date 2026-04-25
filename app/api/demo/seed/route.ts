@@ -2,10 +2,8 @@
 import { NextResponse } from 'next/server'
 import { seedDemoData } from '@/lib/demo-seed'
 
+// POST — called by the owner via the ↺ reset button (live mode only, button hidden in demo mode)
 export async function POST() {
-  if (process.env.NEXT_PUBLIC_DEMO_MODE !== 'true') {
-    return NextResponse.json({ error: 'Demo mode is not enabled' }, { status: 403 })
-  }
   try {
     await seedDemoData()
     return NextResponse.json({ ok: true })
@@ -14,14 +12,11 @@ export async function POST() {
   }
 }
 
+// GET — called by Vercel Cron (authenticated via CRON_SECRET)
 export async function GET(req: Request) {
-  // Verify this is called by Vercel Cron
   const authHeader = req.headers.get('authorization')
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-  if (process.env.NEXT_PUBLIC_DEMO_MODE !== 'true') {
-    return NextResponse.json({ error: 'Demo mode is not enabled' }, { status: 403 })
   }
   try {
     await seedDemoData()
