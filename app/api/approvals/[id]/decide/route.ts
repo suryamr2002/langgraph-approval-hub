@@ -8,8 +8,8 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   // Block ALL writes in demo mode — even direct API calls from DevTools
-  // Demo mode is active when NEXT_PUBLIC_LIVE_MODE is NOT 'true' (default = read-only)
-  if (process.env.NEXT_PUBLIC_LIVE_MODE !== 'true') {
+  // Demo mode is active when NEXT_PUBLIC_DEMO_MODE is NOT 'true' (default = read-only)
+  if (process.env.NEXT_PUBLIC_DEMO_MODE !== 'true') {
     return NextResponse.json({ error: 'Read-only demo — decisions are disabled' }, { status: 403 })
   }
 

@@ -291,15 +291,18 @@ Route approvals to a group — any member can approve:
 
 ## Demo mode vs Live mode
 
-The app has two modes controlled by a single environment variable:
+The app has two modes controlled by a single environment variable.
 
-| | `NEXT_PUBLIC_LIVE_MODE` not set / `false` (default) | `NEXT_PUBLIC_LIVE_MODE=true` |
+> ⚠️ **Note on naming:** `NEXT_PUBLIC_DEMO_MODE=true` means **live/functional mode** (approve/reject enabled). When the variable is `false` or not set, the site runs in **read-only demo mode**. This is intentional — the safe default for public deployments is read-only.
+
+| | `NEXT_PUBLIC_DEMO_MODE` not set / `false` ← **default** | `NEXT_PUBLIC_DEMO_MODE=true` |
 |---|---|---|
-| Dashboard | 🔒 View only — browse freely | ✅ Full access |
-| Approval detail | All fields visible, buttons disabled | Approve / reject works |
-| Settings | All config visible, inputs disabled | Create teams, test notifications |
+| Mode | 🔒 Read-only demo | ✅ Live / functional |
+| Dashboard | Browse, filter, search | Full access |
+| Approval detail | All fields visible, buttons **disabled** | Approve / reject works |
+| Settings | All config visible, inputs **disabled** | Create teams, test notifications |
 | Audit log | Read + export | Read + export |
-| API `/decide` | Blocked server-side (403) | Open |
+| API `/decide` | Returns 403 — blocked server-side | Open |
 
 ### How to test both modes locally
 
@@ -307,7 +310,7 @@ The app has two modes controlled by a single environment variable:
 ```bash
 npm run dev
 # or explicitly:
-NEXT_PUBLIC_LIVE_MODE=false npm run dev
+NEXT_PUBLIC_DEMO_MODE=false npm run dev
 # Visit http://localhost:3000
 # ✓ "Read-only demo" amber banner shown
 # ✓ Approve/Reject buttons greyed out, not clickable
@@ -317,15 +320,15 @@ NEXT_PUBLIC_LIVE_MODE=false npm run dev
 
 **Live mode (full functionality — for your own deployment or video recording):**
 ```bash
-NEXT_PUBLIC_LIVE_MODE=true npm run dev
+NEXT_PUBLIC_DEMO_MODE=true npm run dev
 # Visit http://localhost:3000
 # ✓ Approve/Reject buttons active
 # ✓ Settings inputs work — create teams, test notifications
 # ✓ No banner shown
 ```
 
-> **Public demo on Vercel:** leave `NEXT_PUBLIC_LIVE_MODE` unset (or `false`) — read-only by default.  
-> **Your own real deployment:** set `NEXT_PUBLIC_LIVE_MODE=true` in Vercel environment variables.
+> **Public demo on Vercel:** leave `NEXT_PUBLIC_DEMO_MODE` unset (or `false`) — read-only by default.  
+> **Your own real deployment:** set `NEXT_PUBLIC_DEMO_MODE=true` in Vercel environment variables.
 
 ---
 
@@ -341,7 +344,7 @@ npm run dev
 Run demo mode locally:
 
 ```bash
-NEXT_PUBLIC_LIVE_MODE=true npm run dev
+NEXT_PUBLIC_DEMO_MODE=true npm run dev
 ```
 
 ---
@@ -355,7 +358,7 @@ NEXT_PUBLIC_LIVE_MODE=true npm run dev
 | `SUPABASE_SERVICE_ROLE_KEY` | ✅ | Supabase service role key (server-side only) |
 | `NEXT_PUBLIC_APP_URL` | ✅ | Your deployed URL (e.g. `https://your-app.vercel.app`) |
 | `API_SECRET_TOKEN` | ✅ | Bearer token your agents use to authenticate |
-| `NEXT_PUBLIC_LIVE_MODE` | ❌ | `"true"` = live mode (full access). Default (unset/`false`) = read-only demo |
+| `NEXT_PUBLIC_DEMO_MODE` | ❌ | `"true"` = live mode (full access). Default (unset/`false`) = read-only demo |
 | `CRON_SECRET` | ❌ | Secret for Vercel Cron auto-reset (demo only) |
 | `RESEND_API_KEY` | ❌ | Resend API key for email notifications |
 | `RESEND_FROM` | ❌ | Verified sender email for Resend |

@@ -51,7 +51,7 @@ export default function ApprovalDetailPage({ params }: { params: { id: string } 
     )
   }
 
-  const demoMode = process.env.NEXT_PUBLIC_LIVE_MODE !== 'true'
+  const demoMode = process.env.NEXT_PUBLIC_DEMO_MODE !== 'true'
   const isResolved = !['pending', 'escalated'].includes(approval.status)
 
   return (
