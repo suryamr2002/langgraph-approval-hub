@@ -40,13 +40,24 @@ export default async function DashboardPage({
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold text-gray-900">{title}</h1>
-        {/* Realtime indicator */}
-        <div className="flex items-center gap-1.5 text-xs text-gray-400">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
-          </span>
-          Live
+        <div className="flex items-center gap-3">
+          {/* Try in Colab */}
+          <a
+            href="https://colab.research.google.com/github/suryamr2002/langgraph-approval-hub/blob/main/demo.ipynb"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-xs font-semibold text-orange-600 bg-orange-50 border border-orange-200 rounded-full px-3 py-1 hover:bg-orange-100 transition-colors"
+          >
+            ▶ Try in Colab
+          </a>
+          {/* Realtime indicator */}
+          <div className="flex items-center gap-1.5 text-xs text-gray-400">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+            </span>
+            Live
+          </div>
         </div>
       </div>
       <StatsBar stats={stats} />

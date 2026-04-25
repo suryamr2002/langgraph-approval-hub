@@ -4,7 +4,23 @@
 
 Stop agents from running amok. Give your team a clean dashboard to approve, reject, or escalate AI actions — before they execute.
 
-[Live Demo](https://langgraph-approval-hub.vercel.app) · [PyPI SDK](https://pypi.org/project/langgraph-approval-hub/) · [Discussions](https://github.com/suryamr2002/langgraph-approval-hub/discussions)
+[Live Demo](https://langgraph-approval-hub.vercel.app) · [Try in Colab](https://colab.research.google.com/github/suryamr2002/langgraph-approval-hub/blob/main/demo.ipynb) · [PyPI SDK](https://pypi.org/project/langgraph-approval-hub/) · [Discussions](https://github.com/suryamr2002/langgraph-approval-hub/discussions)
+
+---
+
+## Table of Contents
+
+- [What is this?](#what-is-this)
+- [Try in Google Colab](#try-in-google-colab)
+- [Architecture](#architecture)
+- [Quick Start (5 minutes)](#quick-start-5-minutes)
+- [Python SDK](#python-sdk)
+- [Writing Agents](#writing-agents)
+- [Demo mode vs Live mode](#demo-mode-vs-live-mode)
+- [Local Development](#local-development)
+- [Environment Variables](#environment-variables)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
@@ -19,6 +35,21 @@ LangGraph Approval Hub gives you:
 - 🔔 **Notifications** — email (via Resend) and Slack alerts when approvals arrive
 - 🐍 **Python SDK** — `pip install langgraph-approval-hub`, one function call to pause your agent
 - ☁️ **Zero cost** — runs on Vercel (free tier) + Supabase (free tier)
+
+---
+
+## Try in Google Colab
+
+No installation needed — see the full SDK workflow in your browser in under 2 minutes:
+
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/suryamr2002/langgraph-approval-hub/blob/main/demo.ipynb)
+
+The notebook walks through:
+1. Installing `langgraph-approval-hub` from PyPI
+2. Submitting an approval request to the live demo hub
+3. Watching the dashboard update in real time
+4. Checking the decision via `get_decision()`
+5. Viewing the audit log
 
 ---
 
@@ -262,37 +293,39 @@ Route approvals to a group — any member can approve:
 
 The app has two modes controlled by a single environment variable:
 
-| | `NEXT_PUBLIC_DEMO_MODE=true` | `NEXT_PUBLIC_DEMO_MODE=false` (default) |
+| | `NEXT_PUBLIC_DEMO_MODE` not set / `false` (default) | `NEXT_PUBLIC_DEMO_MODE=true` |
 |---|---|---|
-| Dashboard | View only | Full access |
-| Approval detail | See all fields, buttons disabled | Approve / reject |
-| Settings | See all config, inputs disabled | Create teams, test notifications |
+| Dashboard | 🔒 View only — browse freely | ✅ Full access |
+| Approval detail | All fields visible, buttons disabled | Approve / reject works |
+| Settings | All config visible, inputs disabled | Create teams, test notifications |
 | Audit log | Read + export | Read + export |
-| Reset button | Visible, disabled | Hidden |
+| API `/decide` | Blocked server-side (403) | Open |
 
 ### How to test both modes locally
 
-**Read-only demo mode:**
+**Read-only mode (default — what public visitors see):**
+```bash
+npm run dev
+# or explicitly:
+NEXT_PUBLIC_DEMO_MODE=false npm run dev
+# Visit http://localhost:3000
+# ✓ "Read-only demo" amber banner shown
+# ✓ Approve/Reject buttons greyed out, not clickable
+# ✓ Settings inputs disabled
+# ✓ API /decide returns 403 even from DevTools
+```
+
+**Live mode (full functionality — for your own deployment or video recording):**
 ```bash
 NEXT_PUBLIC_DEMO_MODE=true npm run dev
 # Visit http://localhost:3000
-# ✓ All pages load, all data visible
-# ✓ Approve/Reject buttons are greyed out, not clickable
-# ✓ Settings inputs are disabled
-# ✓ Reset button is greyed out
+# ✓ Approve/Reject buttons active
+# ✓ Settings inputs work — create teams, test notifications
+# ✓ No banner shown
 ```
 
-**Live mode (full functionality):**
-```bash
-NEXT_PUBLIC_DEMO_MODE=false npm run dev   # or just: npm run dev
-# Visit http://localhost:3000
-# ✓ Approve/Reject buttons are active
-# ✓ Settings inputs work — create a team, send a test notification
-# ✓ Reset button hidden (not a demo)
-```
-
-> **For the public demo instance:** set `NEXT_PUBLIC_DEMO_MODE=true` in Vercel environment variables.  
-> **For your own deployment:** leave it unset or set to `false`.
+> **Public demo on Vercel:** leave `NEXT_PUBLIC_DEMO_MODE` unset (or `false`) — read-only by default.  
+> **Your own real deployment:** set `NEXT_PUBLIC_DEMO_MODE=true` in Vercel environment variables.
 
 ---
 
@@ -322,7 +355,7 @@ NEXT_PUBLIC_DEMO_MODE=true npm run dev
 | `SUPABASE_SERVICE_ROLE_KEY` | ✅ | Supabase service role key (server-side only) |
 | `NEXT_PUBLIC_APP_URL` | ✅ | Your deployed URL (e.g. `https://your-app.vercel.app`) |
 | `API_SECRET_TOKEN` | ✅ | Bearer token your agents use to authenticate |
-| `NEXT_PUBLIC_DEMO_MODE` | ❌ | `"true"` to enable demo mode |
+| `NEXT_PUBLIC_DEMO_MODE` | ❌ | `"true"` = live mode (full access). Default (unset/`false`) = read-only demo |
 | `CRON_SECRET` | ❌ | Secret for Vercel Cron auto-reset (demo only) |
 | `RESEND_API_KEY` | ❌ | Resend API key for email notifications |
 | `RESEND_FROM` | ❌ | Verified sender email for Resend |
