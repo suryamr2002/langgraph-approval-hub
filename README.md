@@ -383,3 +383,6 @@ git push origin feat/your-feature
 ## License
 
 MIT — see [LICENSE](LICENSE)
+
+---
+Found this useful? A ⭐ helps others find it. Forks and PRs welcome.
