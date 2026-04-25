@@ -33,7 +33,7 @@ export default async function DashboardPage({
 }) {
   const activeStatus = searchParams.status ?? null
   const { approvals, stats } = await getData(activeStatus ?? undefined)
-  const demoMode = process.env.NEXT_PUBLIC_DEMO_MODE !== 'true'
+  const demoMode = process.env.NEXT_PUBLIC_LIVE_MODE !== 'true'
   const title = activeStatus ? (TAB_TITLES[activeStatus] ?? 'Approvals') : 'All Approvals'
 
   return (
