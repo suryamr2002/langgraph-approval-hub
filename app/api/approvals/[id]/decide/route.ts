@@ -7,6 +7,11 @@ export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  // Block ALL writes in demo mode — even direct API calls from DevTools
+  if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true') {
+    return NextResponse.json({ error: 'Read-only demo — decisions are disabled' }, { status: 403 })
+  }
+
   const body: DecidePayload = await req.json()
 
   if (!['approved', 'rejected'].includes(body.decision)) {
@@ -38,11 +43,13 @@ export async function POST(
       decided_at: new Date().toISOString(),
     })
     .eq('id', params.id)
+    .in('status', ['pending', 'escalated'])  // atomic guard — only updates if still unresolved
     .select('id, status')
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  if (!updated) return NextResponse.json({ error: 'Update matched no rows' }, { status: 500 })
+  // If another request decided first, updated will be null — treat as already resolved
+  if (!updated) return NextResponse.json({ error: 'Approval is already resolved' }, { status: 409 })
 
   return NextResponse.json({ status: updated.status })
 }
