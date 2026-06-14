@@ -1,42 +1,74 @@
 # ⚡ LangGraph Approval Hub
 
-**Human-in-the-loop approvals for LangGraph agents — zero-config, deploy in 5 minutes.**
+  **Human-in-the-loop approvals for LangGraph agents — zero-config, deploy in 5 minutes.**
 
-Stop agents from running amok. Give your team a clean dashboard to approve, reject, or escalate AI actions — before they execute.
+  [![PyPI version](https://badge.fury.io/py/langgraph-approval-hub.svg)](https://pypi.org/project/langgraph-approval-hub/)
+  [![PyPI downloads](https://img.shields.io/pypi/dm/langgraph-approval-hub)](https://pypi.org/project/langgraph-approval-hub/)
+  [![GitHub stars](https://img.shields.io/github/stars/suryamr2002/langgraph-approval-hub?style=social)](https://github.com/suryamr2002/langgraph-approval-hub/stargazers)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+  [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
 
-[Live Demo](https://langgraph-approval-hub.vercel.app) · [Try in Colab](https://colab.research.google.com/github/suryamr2002/langgraph-approval-hub/blob/main/demo.ipynb) · [PyPI SDK](https://pypi.org/project/langgraph-approval-hub/) · [Discussions](https://github.com/suryamr2002/langgraph-approval-hub/discussions)
+  Your LangGraph agent wants to transfer $12,000 to a vendor account. Send a cold email to 5,000 leads. Delete a production record. Without a gate, it executes. **This puts a human in the loop — before the
+  action runs.**
 
----
+  [Live Demo](https://langgraph-approval-hub.vercel.app) · [Try in Colab](https://colab.research.google.com/github/suryamr2002/langgraph-approval-hub/blob/main/demo.ipynb) ·
+  [PyPI](https://pypi.org/project/langgraph-approval-hub/)
 
-## Table of Contents
+  ![Dashboard screenshot](docs/Dashboard_HITL.png)
+  <!-- TODO: replace with actual screenshot or GIF of the live dashboard -->
 
-- [What is this?](#what-is-this)
-- [Try in Google Colab](#try-in-google-colab)
-- [Architecture](#architecture)
-- [Quick Start (5 minutes)](#quick-start-5-minutes)
-- [Python SDK](#python-sdk)
-- [Writing Agents](#writing-agents)
-- [Demo mode vs Live mode](#demo-mode-vs-live-mode)
-- [Local Development](#local-development)
-- [Environment Variables](#environment-variables)
-- [Contributing](#contributing)
-- [License](#license)
+  ---
 
----
+  ## What it solves
 
-## What is this?
+  Building custom approval UI, wiring a DB, handling notifications — that takes days. This does it in 5 minutes:
 
-LangGraph agents often need human sign-off before executing sensitive actions — sending emails, modifying databases, making purchases, or calling external APIs.
+  | Scenario | Without this | With this |
+  |---|---|---|
+  | Agent sends bulk email | Executes immediately | Waits for human approval |
+  | Finance bot initiates transfer | You find out after | CFO approves before it runs |
+  | Agent modifies production DB | No record | Full timestamped audit log |
+  | Multi-agent escalation | Ad hoc | Route to team, any member can decide |
 
-LangGraph Approval Hub gives you:
-- 🖥 **Real-time dashboard** — see all pending approvals, filter by status, assignee, or time
-- ✅ **One-click decisions** — approve or reject with an optional note, recorded in the audit log
-- 📋 **Audit log** — every decision, timestamped, exported to JSON with one click
-- 🔔 **Notifications** — email (via Resend) and Slack alerts when approvals arrive
-- 🐍 **Python SDK** — `pip install langgraph-approval-hub`, one function call to pause your agent
-- ☁️ **Zero cost** — runs on Vercel (free tier) + Supabase (free tier)
+             
+  ```python
+  # One line pauses your agent and waits for a human:
+  result = request_approval(
+      hub_url="https://your-app.vercel.app",
+      api_token="your-token",
+      agent_name="FinanceBot",
+      action_description="Transfer $5,000 to vendor account #4892",
+      assignee="cfo@company.com",
+      assignee_type="email",
+  )
+  if result["status"] == "approved":
+      execute_transfer()
+ ```
+  ---
+  Features
 
----
+  - 🖥 Real-time dashboard — see all pending approvals, filter by status, assignee, or time
+  - ✅ One-click decisions — approve or reject with an optional note, recorded in the audit log
+  - 📋 Audit log — every decision, timestamped, exported to JSON
+  - 🔔 Notifications — email (Resend) and Slack alerts when approvals arrive
+  - 🐍 Python SDK — pip install langgraph-approval-hub, one function call
+  - ☁️  Zero cost — Vercel free tier + Supabase free tier
+
+  ---
+  Table of Contents
+
+   - [Try in Google Colab](#try-in-google-colab)
+   - [Architecture](#architecture)
+   - [Quick Start (5 minutes)](#quick-start-5-minutes)
+   - [Python SDK](#python-sdk)
+   - [Writing Agents](#writing-agents)
+   - [Demo mode vs Live mode](#demo-mode-vs-live-mode)
+   - [Local Development](#local-development)
+   - [Environment Variables](#environment-variables)
+   - [Contributing](#contributing)
+   - [License](#license)
+
+  ---
 
 ## Try in Google Colab
 
